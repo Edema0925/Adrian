@@ -9,8 +9,8 @@
 body{
   margin:0;
   font-family:Arial;
-  color:white;
   background:#05070d;
+  color:white;
 }
 
 .container{
@@ -22,28 +22,12 @@ body{
 h1{
   text-align:center;
   color:#00ff88;
-  text-shadow:0 0 20px #00ff88;
 }
 
 .sub{
   text-align:center;
   opacity:0.6;
   margin-bottom:20px;
-}
-
-.login{
-  text-align:center;
-  margin-bottom:15px;
-}
-
-input,textarea{
-  width:100%;
-  margin:6px 0;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid #00ff88;
-  background:rgba(0,0,0,0.5);
-  color:white;
 }
 
 button{
@@ -53,10 +37,8 @@ button{
   border-radius:10px;
   cursor:pointer;
   font-weight:bold;
-}
-
-button:hover{
-  transform:scale(1.05);
+  width:100%;
+  margin-top:10px;
 }
 
 .form{
@@ -64,8 +46,31 @@ button:hover{
   background:rgba(0,0,0,0.6);
   padding:15px;
   border-radius:12px;
-  border:1px solid rgba(0,255,136,0.3);
   margin-bottom:20px;
+}
+
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #00ff88;
+  background:rgba(0,0,0,0.4);
+  color:white;
+}
+
+.dropzone{
+  border:2px dashed #00ff88;
+  padding:20px;
+  text-align:center;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+  opacity:0.8;
+}
+
+.dropzone.drag{
+  background:rgba(0,255,136,0.1);
 }
 
 .grid{
@@ -76,34 +81,18 @@ button:hover{
 
 .card{
   background:rgba(0,0,0,0.6);
-  border:1px solid rgba(0,255,136,0.2);
-  border-radius:12px;
   padding:10px;
-  position:relative;
+  border-radius:12px;
 }
 
-.title{
-  color:#00ff88;
-  font-weight:bold;
-  margin-bottom:5px;
-}
-
-.desc{
-  opacity:0.8;
-  font-size:13px;
-  margin-bottom:10px;
-}
+.title{color:#00ff88;font-weight:bold;}
+.desc{opacity:0.8;font-size:13px;margin-bottom:10px;}
 
 .delete{
-  position:absolute;
-  top:8px;
-  right:8px;
   background:red;
-  border:none;
-  color:white;
+  width:auto;
   padding:5px 8px;
-  border-radius:6px;
-  cursor:pointer;
+  float:right;
 }
 </style>
 </head>
@@ -112,19 +101,22 @@ button:hover{
 
 <div class="container">
   <h1>FC26 Mods</h1>
-  <div class="sub">Mods system</div>
+  <div class="sub">Upload modów (ZIP / pliki)</div>
 
-  <div class="login">
-    <button onclick="login()">Zaloguj się</button>
-  </div>
+  <button onclick="login()">Zaloguj się</button>
 
   <div class="form" id="form">
 
     <input id="name" placeholder="Nazwa moda">
     <textarea id="desc" placeholder="Opis moda"></textarea>
 
-    <!-- ZIP only -->
-<input type="file" id="file" accept="application/zip,.zip,.rar,.7z">
+    <!-- NORMAL FILE INPUT (NO FILTER = FIX) -->
+    <input type="file" id="file">
+
+    <!-- DRAG & DROP -->
+    <div class="dropzone" id="dropzone">
+      Przeciągnij plik ZIP tutaj lub kliknij
+    </div>
 
     <button onclick="addMod()">Dodaj mod</button>
   </div>
@@ -154,15 +146,12 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
-const ALLOWED_USERS = [
-  "adamskiadrian513@gmail.com"
-];
+const ALLOWED_USERS = ["adamskiadrian513@gmail.com"];
 
 let currentUser = null;
+let selectedFile = null;
 
-window.login = function(){
-  signInWithPopup(auth, provider);
-};
+window.login = () => signInWithPopup(auth, provider);
 
 onAuthStateChanged(auth, (user)=>{
   currentUser = user;
@@ -175,21 +164,45 @@ onAuthStateChanged(auth, (user)=>{
   }
 });
 
+const fileInput = document.getElementById("file");
+const dropzone = document.getElementById("dropzone");
+
+fileInput.addEventListener("change", e=>{
+  selectedFile = e.target.files[0];
+});
+
+dropzone.addEventListener("click", ()=> fileInput.click());
+
+dropzone.addEventListener("dragover", e=>{
+  e.preventDefault();
+  dropzone.classList.add("drag");
+});
+
+dropzone.addEventListener("dragleave", ()=>{
+  dropzone.classList.remove("drag");
+});
+
+dropzone.addEventListener("drop", e=>{
+  e.preventDefault();
+  dropzone.classList.remove("drag");
+  selectedFile = e.dataTransfer.files[0];
+  fileInput.files = e.dataTransfer.files;
+});
+
 window.addMod = async function(){
 
   const name = document.getElementById("name").value;
   const desc = document.getElementById("desc").value;
-  const file = document.getElementById("file").files[0];
 
   if(!name) return;
 
   let fileUrl = "";
 
-  if(file){
-    const fileRef = ref(storage, "mods/" + Date.now() + "_" + file.name);
+  if(selectedFile){
+    const fileRef = ref(storage, "mods/" + Date.now() + "_" + selectedFile.name);
 
-    await uploadBytes(fileRef, file, {
-      contentType: file.type || "application/zip"
+    await uploadBytes(fileRef, selectedFile, {
+      contentType: selectedFile.type || "application/zip"
     });
 
     fileUrl = await getDownloadURL(fileRef);
@@ -204,7 +217,8 @@ window.addMod = async function(){
 
   document.getElementById("name").value = "";
   document.getElementById("desc").value = "";
-  document.getElementById("file").value = "";
+  fileInput.value = "";
+  selectedFile = null;
 
   loadMods();
 };
@@ -227,21 +241,17 @@ async function loadMods(){
 
     box.innerHTML += `
       <div class="card">
-
         ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
           `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
 
-        <div class="title">${m.name || ""}</div>
-        <div class="desc">${m.desc || ""}</div>
+        <div class="title">${m.name}</div>
+        <div class="desc">${m.desc}</div>
 
         ${m.fileUrl ? `
           <a href="${m.fileUrl}" download>
-            <button style="margin-top:10px;width:100%;">
-              ⬇ Pobierz plik ZIP
-            </button>
+            <button>⬇ Pobierz plik</button>
           </a>
         ` : ""}
-
       </div>
     `;
   });
