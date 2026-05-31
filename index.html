@@ -95,6 +95,12 @@ button:hover{
   position:relative;
 }
 
+.card img{
+  width:100%;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
 .title{color:#00ff88;font-weight:bold}
 .desc{opacity:0.8;font-size:13px}
 
@@ -111,6 +117,7 @@ button:hover{
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -122,9 +129,13 @@ button:hover{
   </div>
 
   <div class="form" id="form">
+
     <input id="name" placeholder="Nazwa moda">
     <textarea id="desc" placeholder="Opis moda"></textarea>
-    <input id="link" placeholder="Link do pobrania (Drive / MEGA)">
+
+    <input type="file" id="imageFile" accept="image/*">
+    <input type="file" id="modFile">
+
     <button onclick="addMod()">Dodaj mod</button>
   </div>
 
@@ -136,6 +147,7 @@ button:hover{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4GAAVlZEhZuUvsf5RVhHJYngcEjIrVdg",
@@ -149,6 +161,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 const ALLOWED_USERS = [
@@ -173,16 +186,36 @@ onAuthStateChanged(auth, (user)=>{
 });
 
 window.addMod = async function(){
+
   const name = document.getElementById("name").value;
   const desc = document.getElementById("desc").value;
-  const link = document.getElementById("link").value;
+  const imageFile = document.getElementById("imageFile").files[0];
+  const modFile = document.getElementById("modFile").files[0];
 
   if(!name) return;
+
+  let imageUrl = "";
+  let fileUrl = "";
+
+  // IMAGE UPLOAD
+  if(imageFile){
+    const imgRef = ref(storage, "images/" + Date.now() + imageFile.name);
+    await uploadBytes(imgRef, imageFile);
+    imageUrl = await getDownloadURL(imgRef);
+  }
+
+  // MOD FILE UPLOAD
+  if(modFile){
+    const fileRef = ref(storage, "mods/" + Date.now() + modFile.name);
+    await uploadBytes(fileRef, modFile);
+    fileUrl = await getDownloadURL(fileRef);
+  }
 
   await addDoc(collection(db,"mods"),{
     name,
     desc,
-    link,
+    imageUrl,
+    fileUrl,
     time: Date.now()
   });
 
@@ -206,15 +239,19 @@ async function loadMods(){
 
     box.innerHTML += `
       <div class="card">
+
+        ${m.imageUrl ? `<img src="${m.imageUrl}">` : ""}
+
         ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
           `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
+
         <div class="title">${m.name}</div>
         <div class="desc">${m.desc}</div>
 
-        ${m.link ? `
-          <a href="${m.link}" target="_blank">
+        ${m.fileUrl ? `
+          <a href="${m.fileUrl}" target="_blank">
             <button style="margin-top:10px;width:100%;">
-              ⬇ Download
+              ⬇ Pobierz plik
             </button>
           </a>
         ` : ""}
