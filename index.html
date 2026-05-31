@@ -1,253 +1,231 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FC26 Mods Hub</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      overflow-x: hidden;
-      background: #05070d;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FC26 Mods Hub PRO</title>
 
-    /* FIFA STYLE BACKGROUND */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(0,255,136,0.25), transparent 40%),
-        radial-gradient(circle at 80% 30%, rgba(0,140,255,0.25), transparent 45%),
-        radial-gradient(circle at 50% 80%, rgba(255,0,120,0.15), transparent 50%),
-        linear-gradient(120deg, #05070d, #0a0f1c);
-      z-index: -2;
-      animation: moveBg 10s ease-in-out infinite alternate;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  color:white;
+  background:#05070d;
+  overflow-x:hidden;
+}
 
-    /* floating glow lines */
-    body::after {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('https://www.transparenttextures.com/patterns/cubes.png');
-      opacity: 0.05;
-      z-index: -1;
-    }
+/* FIFA STYLE BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0,255,136,0.25), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(0,140,255,0.25), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(255,0,120,0.15), transparent 50%),
+    linear-gradient(120deg,#05070d,#0a0f1c);
+  z-index:-2;
+}
 
-    @keyframes moveBg {
-      0% { transform: scale(1) translateY(0px); }
-      100% { transform: scale(1.1) translateY(-10px); }
-    }
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
+h1{
+  text-align:center;
+  color:#00ff88;
+  text-shadow:0 0 25px #00ff88;
+  margin-bottom:5px;
+}
 
-    h1 {
-      text-align: center;
-      color: #00ff88;
-      text-shadow: 0 0 25px #00ff88;
-      font-size: 42px;
-      margin-bottom: 5px;
-    }
+.sub{
+  text-align:center;
+  opacity:0.6;
+  margin-bottom:20px;
+}
 
-    .hint {
-      text-align: center;
-      opacity: 0.6;
-      margin-bottom: 20px;
-    }
+/* LOGIN */
+.login{
+  text-align:center;
+  margin-bottom:15px;
+}
 
-    .login {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #00ff88;
+  background:rgba(0,0,0,0.5);
+  color:white;
+}
 
-    .form {
-      display: none;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(0,255,136,0.3);
-      padding: 15px;
-      border-radius: 14px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 0 25px rgba(0,255,136,0.15);
-    }
+/* FORM */
+.form{
+  display:none;
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(0,255,136,0.3);
+  padding:15px;
+  border-radius:14px;
+  backdrop-filter:blur(10px);
+  margin-bottom:20px;
+}
 
-    input, textarea {
-      width: 100%;
-      margin-top: 8px;
-      margin-bottom: 12px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(0,255,136,0.4);
-      background: rgba(0,0,0,0.5);
-      color: white;
-      outline: none;
-    }
+/* BUTTON */
+button{
+  background:linear-gradient(90deg,#00ff88,#00ccff);
+  border:none;
+  padding:10px 15px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
 
-    button {
-      background: linear-gradient(90deg, #00ff88, #00ccff);
-      color: black;
-      border: none;
-      padding: 10px 15px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+button:hover{
+  transform:scale(1.05);
+}
 
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0,255,136,0.5);
-    }
+/* MODS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:15px;
+}
 
-    .mods {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
+.card{
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(0,255,136,0.2);
+  border-radius:14px;
+  overflow:hidden;
+  transition:0.2s;
+}
 
-    .card {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(0,255,136,0.25);
-      border-radius: 14px;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
-    }
+.card:hover{
+  transform:translateY(-5px);
+}
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 25px rgba(0,255,136,0.25);
-    }
+.card img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+}
 
-    .card img {
-      width: 100%;
-      height: 170px;
-      object-fit: cover;
-    }
+.card-body{
+  padding:10px;
+}
 
-    .card-content {
-      padding: 10px;
-    }
+.title{
+  color:#00ff88;
+  font-size:18px;
+  font-weight:bold;
+}
 
-    .name {
-      color: #00ff88;
-      font-size: 18px;
-      font-weight: bold;
-    }
+.desc{
+  font-size:13px;
+  opacity:0.8;
+}
 
-    .desc {
-      font-size: 14px;
-      opacity: 0.85;
-      margin-top: 5px;
-    }
-
-    .file {
-      font-size: 12px;
-      color: #00ccff;
-      margin-top: 8px;
-    }
-  </style>
+.file{
+  font-size:12px;
+  color:#00ccff;
+  margin-top:5px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-  <h1>FC26 Mods Hub</h1>
-  <div class="hint">FIFA-style mods platform</div>
+  <h1>FC26 Mods Hub PRO</h1>
+  <div class="sub">GitHub Edition • zapis lokalny</div>
 
   <div class="login">
-    <input type="password" id="pass" placeholder="Hasło admina" />
+    <input type="password" id="pass" placeholder="Hasło admina">
     <button onclick="login()">Zaloguj</button>
   </div>
 
   <div class="form" id="form">
-    <input type="text" id="name" placeholder="Nazwa moda" />
+    <input id="name" placeholder="Nazwa moda">
     <textarea id="desc" placeholder="Opis moda"></textarea>
-    <input type="file" id="file" />
-    <input type="file" id="image" accept="image/*" />
+    <input type="file" id="file">
+    <input type="file" id="img" accept="image/*">
     <button onclick="addMod()">Dodaj mod</button>
   </div>
 
-  <div class="mods" id="mods"></div>
+  <div class="grid" id="mods"></div>
 </div>
 
 <script>
-  const mods = [];
+let mods = JSON.parse(localStorage.getItem("mods")) || [];
 
-  function login() {
-    const pass = document.getElementById('pass').value;
-    if (pass === "admin123") {
-      document.getElementById('form').style.display = "block";
-      alert("Zalogowano jako admin");
-    } else {
-      alert("Złe hasło");
-    }
-  }
+function login(){
+  const p = document.getElementById("pass").value;
+  if(p === "admin123"){
+    document.getElementById("form").style.display="block";
+  } else alert("Złe hasło");
+}
 
-  function addMod() {
-    const name = document.getElementById('name').value.trim();
-    const desc = document.getElementById('desc').value.trim();
-    const fileInput = document.getElementById('file');
-    const imageInput = document.getElementById('image');
+function save(){
+  localStorage.setItem("mods", JSON.stringify(mods));
+}
 
-    if (!name) return;
+function addMod(){
+  const name = document.getElementById("name").value.trim();
+  const desc = document.getElementById("desc").value.trim();
+  const file = document.getElementById("file").files[0];
+  const img = document.getElementById("img").files[0];
 
-    const fileName = fileInput.files[0] ? fileInput.files[0].name : "brak pliku";
+  if(!name) return;
 
-    const createMod = (imageData) => {
-      mods.unshift({
-        name,
-        desc,
-        fileName,
-        image: imageData
-      });
+  const fileName = file ? file.name : "brak pliku";
 
-      renderMods();
-
-      document.getElementById('name').value = "";
-      document.getElementById('desc').value = "";
-      fileInput.value = "";
-      imageInput.value = "";
-    };
-
-    if (imageInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = e => createMod(e.target.result);
-      reader.readAsDataURL(imageInput.files[0]);
-    } else {
-      createMod(null);
-    }
-  }
-
-  function renderMods() {
-    const container = document.getElementById('mods');
-    container.innerHTML = '';
-
-    mods.forEach(mod => {
-      container.innerHTML += `
-        <div class="card">
-          ${mod.image ? `<img src="${mod.image}" />` : ''}
-          <div class="card-content">
-            <div class="name">${mod.name}</div>
-            <div class="desc">${mod.desc}</div>
-            <div class="file">Plik: ${mod.fileName}</div>
-          </div>
-        </div>
-      `;
+  const create = (imgData) => {
+    mods.unshift({
+      name,
+      desc,
+      fileName,
+      img: imgData
     });
+
+    save();
+    render();
+
+    document.getElementById("name").value="";
+    document.getElementById("desc").value="";
+    document.getElementById("file").value="";
+    document.getElementById("img").value="";
+  };
+
+  if(img){
+    const r = new FileReader();
+    r.onload = e => create(e.target.result);
+    r.readAsDataURL(img);
+  } else {
+    create(null);
   }
+}
+
+function render(){
+  const box = document.getElementById("mods");
+  box.innerHTML="";
+
+  mods.forEach(m=>{
+    box.innerHTML += `
+      <div class="card">
+        ${m.img ? `<img src="${m.img}">` : ""}
+        <div class="card-body">
+          <div class="title">${m.name}</div>
+          <div class="desc">${m.desc}</div>
+          <div class="file">Plik: ${m.fileName}</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+render();
 </script>
 
 </body>
