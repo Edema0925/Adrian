@@ -11,23 +11,10 @@ body{
   font-family:Arial;
   color:white;
   background:#05070d;
-  overflow-x:hidden;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(0,255,136,0.25), transparent 40%),
-    radial-gradient(circle at 80% 30%, rgba(0,140,255,0.25), transparent 45%),
-    radial-gradient(circle at 50% 80%, rgba(255,0,120,0.15), transparent 50%),
-    linear-gradient(120deg,#05070d,#0a0f1c);
-  z-index:-2;
 }
 
 .container{
-  max-width:1000px;
+  max-width:900px;
   margin:auto;
   padding:20px;
 }
@@ -35,7 +22,7 @@ body::before{
 h1{
   text-align:center;
   color:#00ff88;
-  text-shadow:0 0 25px #00ff88;
+  text-shadow:0 0 20px #00ff88;
 }
 
 .sub{
@@ -95,14 +82,17 @@ button:hover{
   position:relative;
 }
 
-.card img{
-  width:100%;
-  border-radius:10px;
-  margin-bottom:10px;
+.title{
+  color:#00ff88;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
-.title{color:#00ff88;font-weight:bold}
-.desc{opacity:0.8;font-size:13px}
+.desc{
+  opacity:0.8;
+  font-size:13px;
+  margin-bottom:10px;
+}
 
 .delete{
   position:absolute;
@@ -122,7 +112,7 @@ button:hover{
 
 <div class="container">
   <h1>FC26 Mods</h1>
-  <div class="sub">Firebase Mod System</div>
+  <div class="sub">Mods system</div>
 
   <div class="login">
     <button onclick="login()">Zaloguj się</button>
@@ -133,8 +123,7 @@ button:hover{
     <input id="name" placeholder="Nazwa moda">
     <textarea id="desc" placeholder="Opis moda"></textarea>
 
-    <input type="file" id="imageFile" accept="image/*">
-    <input type="file" id="modFile">
+    <input type="file" id="file">
 
     <button onclick="addMod()">Dodaj mod</button>
   </div>
@@ -187,48 +176,32 @@ onAuthStateChanged(auth, (user)=>{
 
 window.addMod = async function(){
 
-  try {
+  const name = document.getElementById("name").value;
+  const desc = document.getElementById("desc").value;
+  const file = document.getElementById("file").files[0];
 
-    const name = document.getElementById("name").value;
-    const desc = document.getElementById("desc").value;
-    const imageFile = document.getElementById("imageFile").files[0];
-    const modFile = document.getElementById("modFile").files[0];
+  if(!name) return;
 
-    if(!name) return;
+  let fileUrl = "";
 
-    let imageUrl = "";
-    let fileUrl = "";
-
-    if(imageFile){
-      const imgRef = ref(storage, "images/" + Date.now() + imageFile.name);
-      await uploadBytes(imgRef, imageFile);
-      imageUrl = await getDownloadURL(imgRef);
-    }
-
-    if(modFile){
-      const fileRef = ref(storage, "mods/" + Date.now() + modFile.name);
-      await uploadBytes(fileRef, modFile);
-      fileUrl = await getDownloadURL(fileRef);
-    }
-
-    await addDoc(collection(db,"mods"),{
-      name,
-      desc,
-      imageUrl,
-      fileUrl,
-      time: Date.now()
-    });
-
-    document.getElementById("name").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("imageFile").value = "";
-    document.getElementById("modFile").value = "";
-
-    await loadMods();
-
-  } catch (e) {
-    console.error("ERROR ADD MOD:", e);
+  if(file){
+    const fileRef = ref(storage, "mods/" + Date.now() + file.name);
+    await uploadBytes(fileRef, file);
+    fileUrl = await getDownloadURL(fileRef);
   }
+
+  await addDoc(collection(db,"mods"),{
+    name,
+    desc,
+    fileUrl,
+    time: Date.now()
+  });
+
+  document.getElementById("name").value = "";
+  document.getElementById("desc").value = "";
+  document.getElementById("file").value = "";
+
+  loadMods();
 };
 
 window.deleteMod = async function(id){
@@ -238,45 +211,35 @@ window.deleteMod = async function(id){
 
 async function loadMods(){
 
-  try {
+  const q = query(collection(db,"mods"), orderBy("time","desc"));
+  const snap = await getDocs(q);
 
-    const q = query(collection(db,"mods"), orderBy("time","desc"));
-    const snap = await getDocs(q);
+  const box = document.getElementById("mods");
+  box.innerHTML="";
 
-    const box = document.getElementById("mods");
-    box.innerHTML="";
+  snap.forEach(d=>{
+    const m = d.data();
 
-    console.log("MODS:", snap.size);
+    box.innerHTML += `
+      <div class="card">
 
-    snap.forEach(d=>{
-      const m = d.data();
+        ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
+          `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
 
-      box.innerHTML += `
-        <div class="card">
+        <div class="title">${m.name || ""}</div>
+        <div class="desc">${m.desc || ""}</div>
 
-          ${m.imageUrl ? `<img src="${m.imageUrl}">` : ""}
+        ${m.fileUrl ? `
+          <a href="${m.fileUrl}" target="_blank">
+            <button style="margin-top:10px;width:100%;">
+              ⬇ Pobierz plik
+            </button>
+          </a>
+        ` : ""}
 
-          ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
-            `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
-
-          <div class="title">${m.name || ""}</div>
-          <div class="desc">${m.desc || ""}</div>
-
-          ${m.fileUrl ? `
-            <a href="${m.fileUrl}" target="_blank">
-              <button style="margin-top:10px;width:100%;">
-                ⬇ Pobierz plik
-              </button>
-            </a>
-          ` : ""}
-
-        </div>
-      `;
-    });
-
-  } catch (e) {
-    console.error("LOAD ERROR:", e);
-  }
+      </div>
+    `;
+  });
 }
 
 </script>
