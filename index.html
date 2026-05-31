@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC26 Mods Hub</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FC26 Mods Hub PRO</title>
 <style>
 body{
   margin:0;
@@ -36,6 +35,18 @@ h1{
   text-align:center;
   color:#00ff88;
   text-shadow:0 0 25px #00ff88;
+  margin-bottom:5px;
+}
+
+.sub{
+  text-align:center;
+  opacity:0.6;
+  margin-bottom:20px;
+}
+
+.login{
+  text-align:center;
+  margin-bottom:15px;
 }
 
 input,textarea{
@@ -62,10 +73,11 @@ button:hover{
 }
 
 .form{
+  display:none;
   background:rgba(0,0,0,0.6);
   padding:15px;
   border-radius:12px;
-  display:none;
+  border:1px solid rgba(0,255,136,0.3);
 }
 
 .grid{
@@ -80,12 +92,11 @@ button:hover{
   border:1px solid rgba(0,255,136,0.2);
   border-radius:12px;
   overflow:hidden;
+  transition:0.2s;
 }
 
-.card img{
-  width:100%;
-  height:160px;
-  object-fit:cover;
+.card:hover{
+  transform:translateY(-5px);
 }
 
 .card-body{
@@ -97,67 +108,87 @@ button:hover{
 .file{color:#00ccff;font-size:12px}
 </style>
 </head>
-
 <body>
 
 <div class="container">
-<h1>FC26 Mods Hub</h1>
+<h1>FC26 Mods Hub PRO</h1>
+<div class="sub">Firebase Access System</div>
 
-<input type="password" id="pass" placeholder="Hasło admina">
-<button onclick="login()">Zaloguj</button>
+<div class="login">
+  <button onclick="login()">Zaloguj Google</button>
+</div>
 
 <div class="form" id="form">
-  <input id="name" placeholder="Nazwa moda">
-  <textarea id="desc" placeholder="Opis"></textarea>
-  <input type="file" id="img" accept="image/*">
+  <input id="name" placeholder="Nazwa moda" />
+  <textarea id="desc" placeholder="Opis moda"></textarea>
   <button onclick="addMod()">Dodaj mod</button>
 </div>
 
 <div class="grid" id="mods"></div>
 </div>
 
-<script>
+<script type="module">
 
-let mods = JSON.parse(localStorage.getItem("mods")) || [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-function login(){
-  if(document.getElementById("pass").value==="admin123"){
+// 🔧 FIREBASE CONFIG (UZUPEŁNIJ)
+const firebaseConfig = {
+  apiKey: "TWOJ_KEY",
+  authDomain: "TWOJ_PROJECT.firebaseapp.com",
+  projectId: "TWOJ_PROJECT"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+// 👥 TYLKO TY
+const ALLOWED_USERS = [
+  "twojemail@gmail.com"
+];
+
+window.login = function(){
+  signInWithPopup(auth, provider);
+};
+
+onAuthStateChanged(auth, (user)=>{
+  if(user && ALLOWED_USERS.includes(user.email)){
     document.getElementById("form").style.display="block";
-  } else alert("Złe hasło");
-}
+    loadMods();
+  } else {
+    document.getElementById("form").style.display="none";
+  }
+});
 
-function save(){
-  localStorage.setItem("mods", JSON.stringify(mods));
-}
-
-function addMod(){
-  let name=document.getElementById("name").value;
-  let desc=document.getElementById("desc").value;
-  let img=document.getElementById("img").files[0];
+window.addMod = async function(){
+  const name = document.getElementById("name").value;
+  const desc = document.getElementById("desc").value;
 
   if(!name) return;
 
-  const create=(imgData)=>{
-    mods.unshift({name,desc,img:imgData});
-    save();
-    render();
-  };
+  await addDoc(collection(db,"mods"),{
+    name,
+    desc,
+    time: Date.now()
+  });
 
-  if(img){
-    let r=new FileReader();
-    r.onload=e=>create(e.target.result);
-    r.readAsDataURL(img);
-  } else create(null);
-}
+  loadMods();
+};
 
-function render(){
-  let box=document.getElementById("mods");
+async function loadMods(){
+  const q = query(collection(db,"mods"), orderBy("time","desc"));
+  const snap = await getDocs(q);
+
+  const box = document.getElementById("mods");
   box.innerHTML="";
 
-  mods.forEach(m=>{
-    box.innerHTML+=`
+  snap.forEach(doc=>{
+    const m = doc.data();
+    box.innerHTML += `
       <div class="card">
-        ${m.img?`<img src="${m.img}">`:""}
         <div class="card-body">
           <div class="title">${m.name}</div>
           <div class="desc">${m.desc}</div>
@@ -166,8 +197,6 @@ function render(){
     `;
   });
 }
-
-render();
 
 </script>
 
