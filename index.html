@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FC26 Mods Hub PRO</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC26 Mods Hub</title>
 
 <style>
 body{
@@ -14,7 +14,6 @@ body{
   overflow-x:hidden;
 }
 
-/* FIFA STYLE BACKGROUND */
 body::before{
   content:"";
   position:fixed;
@@ -37,47 +36,22 @@ h1{
   text-align:center;
   color:#00ff88;
   text-shadow:0 0 25px #00ff88;
-  margin-bottom:5px;
-}
-
-.sub{
-  text-align:center;
-  opacity:0.6;
-  margin-bottom:20px;
-}
-
-/* LOGIN */
-.login{
-  text-align:center;
-  margin-bottom:15px;
 }
 
 input,textarea{
   width:100%;
-  padding:10px;
   margin:6px 0;
+  padding:10px;
   border-radius:10px;
   border:1px solid #00ff88;
   background:rgba(0,0,0,0.5);
   color:white;
 }
 
-/* FORM */
-.form{
-  display:none;
-  background:rgba(0,0,0,0.6);
-  border:1px solid rgba(0,255,136,0.3);
-  padding:15px;
-  border-radius:14px;
-  backdrop-filter:blur(10px);
-  margin-bottom:20px;
-}
-
-/* BUTTON */
 button{
   background:linear-gradient(90deg,#00ff88,#00ccff);
   border:none;
-  padding:10px 15px;
+  padding:10px;
   border-radius:10px;
   cursor:pointer;
   font-weight:bold;
@@ -87,23 +61,25 @@ button:hover{
   transform:scale(1.05);
 }
 
-/* MODS */
+.form{
+  background:rgba(0,0,0,0.6);
+  padding:15px;
+  border-radius:12px;
+  display:none;
+}
+
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:15px;
+  margin-top:20px;
 }
 
 .card{
   background:rgba(0,0,0,0.6);
   border:1px solid rgba(0,255,136,0.2);
-  border-radius:14px;
+  border-radius:12px;
   overflow:hidden;
-  transition:0.2s;
-}
-
-.card:hover{
-  transform:translateY(-5px);
 }
 
 .card img{
@@ -116,53 +92,36 @@ button:hover{
   padding:10px;
 }
 
-.title{
-  color:#00ff88;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.desc{
-  font-size:13px;
-  opacity:0.8;
-}
-
-.file{
-  font-size:12px;
-  color:#00ccff;
-  margin-top:5px;
-}
+.title{color:#00ff88;font-weight:bold}
+.desc{opacity:0.8;font-size:13px}
+.file{color:#00ccff;font-size:12px}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-  <h1>FC26 Mods Hub PRO</h1>
-  <div class="sub">GitHub Edition • zapis lokalny</div>
+<h1>FC26 Mods Hub</h1>
 
-  <div class="login">
-    <input type="password" id="pass" placeholder="Hasło admina">
-    <button onclick="login()">Zaloguj</button>
-  </div>
+<input type="password" id="pass" placeholder="Hasło admina">
+<button onclick="login()">Zaloguj</button>
 
-  <div class="form" id="form">
-    <input id="name" placeholder="Nazwa moda">
-    <textarea id="desc" placeholder="Opis moda"></textarea>
-    <input type="file" id="file">
-    <input type="file" id="img" accept="image/*">
-    <button onclick="addMod()">Dodaj mod</button>
-  </div>
+<div class="form" id="form">
+  <input id="name" placeholder="Nazwa moda">
+  <textarea id="desc" placeholder="Opis"></textarea>
+  <input type="file" id="img" accept="image/*">
+  <button onclick="addMod()">Dodaj mod</button>
+</div>
 
-  <div class="grid" id="mods"></div>
+<div class="grid" id="mods"></div>
 </div>
 
 <script>
+
 let mods = JSON.parse(localStorage.getItem("mods")) || [];
 
 function login(){
-  const p = document.getElementById("pass").value;
-  if(p === "admin123"){
+  if(document.getElementById("pass").value==="admin123"){
     document.getElementById("form").style.display="block";
   } else alert("Złe hasło");
 }
@@ -172,53 +131,36 @@ function save(){
 }
 
 function addMod(){
-  const name = document.getElementById("name").value.trim();
-  const desc = document.getElementById("desc").value.trim();
-  const file = document.getElementById("file").files[0];
-  const img = document.getElementById("img").files[0];
+  let name=document.getElementById("name").value;
+  let desc=document.getElementById("desc").value;
+  let img=document.getElementById("img").files[0];
 
   if(!name) return;
 
-  const fileName = file ? file.name : "brak pliku";
-
-  const create = (imgData) => {
-    mods.unshift({
-      name,
-      desc,
-      fileName,
-      img: imgData
-    });
-
+  const create=(imgData)=>{
+    mods.unshift({name,desc,img:imgData});
     save();
     render();
-
-    document.getElementById("name").value="";
-    document.getElementById("desc").value="";
-    document.getElementById("file").value="";
-    document.getElementById("img").value="";
   };
 
   if(img){
-    const r = new FileReader();
-    r.onload = e => create(e.target.result);
+    let r=new FileReader();
+    r.onload=e=>create(e.target.result);
     r.readAsDataURL(img);
-  } else {
-    create(null);
-  }
+  } else create(null);
 }
 
 function render(){
-  const box = document.getElementById("mods");
+  let box=document.getElementById("mods");
   box.innerHTML="";
 
   mods.forEach(m=>{
-    box.innerHTML += `
+    box.innerHTML+=`
       <div class="card">
-        ${m.img ? `<img src="${m.img}">` : ""}
+        ${m.img?`<img src="${m.img}">`:""}
         <div class="card-body">
           <div class="title">${m.name}</div>
           <div class="desc">${m.desc}</div>
-          <div class="file">Plik: ${m.fileName}</div>
         </div>
       </div>
     `;
@@ -226,6 +168,7 @@ function render(){
 }
 
 render();
+
 </script>
 
 </body>
