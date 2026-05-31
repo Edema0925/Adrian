@@ -184,7 +184,7 @@ async function loadMods(){
 
   const box = document.getElementById("mods");
   box.innerHTML="";
-
+localStorage.clear();
   snap.forEach(doc=>{
     const m = doc.data();
     box.innerHTML += `
