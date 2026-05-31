@@ -1,299 +1,253 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC26 MODS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FC26 Mods Hub</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background: #05070d;
+    }
 
-<style>
-body{
-margin:0;
-font-family:Segoe UI,Arial;
-background:#0b0f17;
-color:#fff;
-}
+    /* FIFA STYLE BACKGROUND */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0,255,136,0.25), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(0,140,255,0.25), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(255,0,120,0.15), transparent 50%),
+        linear-gradient(120deg, #05070d, #0a0f1c);
+      z-index: -2;
+      animation: moveBg 10s ease-in-out infinite alternate;
+    }
 
-header{
-padding:20px;
-text-align:center;
-background:#151c2a;
-font-size:20px;
-font-weight:bold;
-}
+    /* floating glow lines */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/cubes.png');
+      opacity: 0.05;
+      z-index: -1;
+    }
 
-.container{max-width:1200px;margin:auto;padding:20px}
+    @keyframes moveBg {
+      0% { transform: scale(1) translateY(0px); }
+      100% { transform: scale(1.1) translateY(-10px); }
+    }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:10px;
-margin-bottom:10px;
-}
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
 
-input,select,button{
-padding:10px;
-border-radius:8px;
-border:1px solid #2a3445;
-background:#141b2a;
-color:#fff;
-outline:none;
-}
+    h1 {
+      text-align: center;
+      color: #00ff88;
+      text-shadow: 0 0 25px #00ff88;
+      font-size: 42px;
+      margin-bottom: 5px;
+    }
 
-button{
-cursor:pointer;
-background:#00c16a;
-border:none;
-font-weight:bold;
-}
+    .hint {
+      text-align: center;
+      opacity: 0.6;
+      margin-bottom: 20px;
+    }
 
-button:hover{opacity:0.85}
+    .login {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-.card{
-background:#141b2a;
-padding:12px;
-border-radius:12px;
-margin-top:10px;
-border:1px solid #222c3d;
-}
+    .form {
+      display: none;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(0,255,136,0.3);
+      padding: 15px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 0 25px rgba(0,255,136,0.15);
+    }
 
-.badge{
-font-size:12px;
-padding:3px 8px;
-border-radius:20px;
-background:#333;
-margin-right:5px;
-}
+    input, textarea {
+      width: 100%;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,255,136,0.4);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      outline: none;
+    }
 
-.installed{background:#00c16a}
-.todo{background:#ff9800}
-.favorite{background:#ff3b7a}
+    button {
+      background: linear-gradient(90deg, #00ff88, #00ccff);
+      color: black;
+      border: none;
+      padding: 10px 15px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-.stats{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:10px;
-margin:10px 0;
-}
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0,255,136,0.5);
+    }
 
-.stat{
-background:#141b2a;
-padding:10px;
-border-radius:10px;
-text-align:center;
-}
+    .mods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
 
-img{
-width:100%;
-border-radius:10px;
-margin-bottom:10px;
-}
-</style>
+    .card {
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(0,255,136,0.25);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(0,255,136,0.25);
+    }
+
+    .card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 10px;
+    }
+
+    .name {
+      color: #00ff88;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .desc {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-top: 5px;
+    }
+
+    .file {
+      font-size: 12px;
+      color: #00ccff;
+      margin-top: 8px;
+    }
+  </style>
 </head>
-
 <body>
 
-<header>🎮 FC26 MODS</header>
-
 <div class="container">
+  <h1>FC26 Mods Hub</h1>
+  <div class="hint">FIFA-style mods platform</div>
 
-<div class="stats">
-<div class="stat"><div id="countAll">0</div><small>Wszystkie</small></div>
-<div class="stat"><div id="countInstalled">0</div><small>Zainstalowane</small></div>
-<div class="stat"><div id="countFav">0</div><small>Ulubione</small></div>
-<div class="stat"><div id="countCareer">0</div><small>Career</small></div>
-<div class="stat"><div id="countGameplay">0</div><small>Gameplay</small></div>
-</div>
+  <div class="login">
+    <input type="password" id="pass" placeholder="Hasło admina" />
+    <button onclick="login()">Zaloguj</button>
+  </div>
 
-<div class="grid">
-<input id="name" placeholder="Nazwa moda">
-<input id="link" placeholder="Link">
-<input id="tags" placeholder="Tagi (np. realism,faces)">
+  <div class="form" id="form">
+    <input type="text" id="name" placeholder="Nazwa moda" />
+    <textarea id="desc" placeholder="Opis moda"></textarea>
+    <input type="file" id="file" />
+    <input type="file" id="image" accept="image/*" />
+    <button onclick="addMod()">Dodaj mod</button>
+  </div>
 
-<select id="category">
-<option>Career Mode</option>
-<option>Gameplay</option>
-<option>Faces</option>
-<option>Kits</option>
-<option>Graphics</option>
-<option>Other</option>
-</select>
-
-<select id="status">
-<option>Do pobrania</option>
-<option>Zainstalowany</option>
-</select>
-
-<input type="file" id="image" accept="image/*">
-<input type="file" id="file">
-</div>
-
-<button onclick="addMod()">➕ Dodaj Mod</button>
-
-<br><br>
-
-<input id="search" placeholder="Szukaj..." oninput="render()">
-<select id="filter" onchange="render()">
-<option value="all">Wszystkie</option>
-<option>Career Mode</option>
-<option>Gameplay</option>
-<option>Faces</option>
-<option>Kits</option>
-<option>Graphics</option>
-<option>Other</option>
-</select>
-
-<div id="mods"></div>
-
+  <div class="mods" id="mods"></div>
 </div>
 
 <script>
+  const mods = [];
 
-let db;
-let mods = [];
-let fileData = null;
-let imageData = null;
+  function login() {
+    const pass = document.getElementById('pass').value;
+    if (pass === "admin123") {
+      document.getElementById('form').style.display = "block";
+      alert("Zalogowano jako admin");
+    } else {
+      alert("Złe hasło");
+    }
+  }
 
-function openDB(){
-const req = indexedDB.open("fc26mods",1);
+  function addMod() {
+    const name = document.getElementById('name').value.trim();
+    const desc = document.getElementById('desc').value.trim();
+    const fileInput = document.getElementById('file');
+    const imageInput = document.getElementById('image');
 
-req.onupgradeneeded = e=>{
-db = e.target.result;
-db.createObjectStore("mods",{keyPath:"id"});
-};
+    if (!name) return;
 
-req.onsuccess = e=>{
-db = e.target.result;
-loadMods();
-};
-}
+    const fileName = fileInput.files[0] ? fileInput.files[0].name : "brak pliku";
 
-function saveDB(){
-const tx = db.transaction("mods","readwrite");
-const store = tx.objectStore("mods");
-store.clear();
-mods.forEach(m=>store.put(m));
-}
+    const createMod = (imageData) => {
+      mods.unshift({
+        name,
+        desc,
+        fileName,
+        image: imageData
+      });
 
-function loadMods(){
-const tx = db.transaction("mods","readonly");
-const store = tx.objectStore("mods");
+      renderMods();
 
-store.getAll().onsuccess = e=>{
-mods = e.target.result || [];
-render();
-stats();
-};
-}
+      document.getElementById('name').value = "";
+      document.getElementById('desc').value = "";
+      fileInput.value = "";
+      imageInput.value = "";
+    };
 
-document.getElementById("file").onchange = e=>{
-const f = e.target.files[0];
-if(!f) return;
+    if (imageInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => createMod(e.target.result);
+      reader.readAsDataURL(imageInput.files[0]);
+    } else {
+      createMod(null);
+    }
+  }
 
-const r = new FileReader();
-r.onload = ()=> fileData = r.result;
-r.readAsDataURL(f);
-};
+  function renderMods() {
+    const container = document.getElementById('mods');
+    container.innerHTML = '';
 
-document.getElementById("image").onchange = e=>{
-const f = e.target.files[0];
-if(!f) return;
-
-const r = new FileReader();
-r.onload = ()=> imageData = r.result;
-r.readAsDataURL(f);
-};
-
-function addMod(){
-if(!name.value) return;
-
-mods.push({
-id:crypto.randomUUID(),
-name:name.value,
-link:link.value,
-category:category.value,
-status:status.value,
-tags:tags.value.split(",").map(t=>t.trim()),
-file:fileData,
-image:imageData,
-fav:false,
-date:Date.now()
-});
-
-name.value="";
-link.value="";
-tags.value="";
-fileData=null;
-imageData=null;
-
-saveDB();
-render();
-stats();
-}
-
-function del(id){
-mods = mods.filter(m=>m.id!==id);
-saveDB();render();stats();
-}
-
-function toggle(id){
-let m = mods.find(x=>x.id===id);
-m.status = m.status==="Zainstalowany"?"Do pobrania":"Zainstalowany";
-saveDB();render();stats();
-}
-
-function fav(id){
-let m = mods.find(x=>x.id===id);
-m.fav = !m.fav;
-saveDB();render();stats();
-}
-
-function render(){
-let s = search.value.toLowerCase();
-let f = filter.value;
-
-let data = mods.filter(m=>{
-return m.name.toLowerCase().includes(s)
-&& (f==="all" || m.category===f);
-});
-
-modsDiv.innerHTML = data.map(m=>`
-<div class="card">
-
-${m.image ? `<img src="${m.image}">` : ""}
-
-<h3>${m.name}</h3>
-
-<div>
-<span class="badge">${m.category}</span>
-<span class="badge ${m.status==="Zainstalowany"?"installed":"todo"}">${m.status}</span>
-${m.fav?'<span class="badge favorite">★</span>':''}
-</div>
-
-<p>${(m.tags||[]).join(", ")}</p>
-
-${m.link?`<a href="${m.link}" target="_blank">🔗 Link</a>`:""}
-${m.file?`<p>📦 plik dodany</p>`:""}
-
-<br><br>
-
-<button onclick="toggle('${m.id}')">Zmień status</button>
-<button onclick="fav('${m.id}')">★</button>
-<button onclick="del('${m.id}')">Usuń</button>
-
-</div>
-`).join("");
-}
-
-function stats(){
-countAll.innerText = mods.length;
-countInstalled.innerText = mods.filter(m=>m.status==="Zainstalowany").length;
-countFav.innerText = mods.filter(m=>m.fav).length;
-countCareer.innerText = mods.filter(m=>m.category==="Career Mode").length;
-countGameplay.innerText = mods.filter(m=>m.category==="Gameplay").length;
-}
-
-openDB();
-
+    mods.forEach(mod => {
+      container.innerHTML += `
+        <div class="card">
+          ${mod.image ? `<img src="${mod.image}" />` : ''}
+          <div class="card-content">
+            <div class="name">${mod.name}</div>
+            <div class="desc">${mod.desc}</div>
+            <div class="file">Plik: ${mod.fileName}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
 </script>
 
 </body>
