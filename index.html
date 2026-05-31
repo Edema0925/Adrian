@@ -93,6 +93,7 @@ button:hover{
   border-radius:12px;
   overflow:hidden;
   transition:0.2s;
+  position:relative;
 }
 
 .card:hover{
@@ -105,7 +106,19 @@ button:hover{
 
 .title{color:#00ff88;font-weight:bold}
 .desc{opacity:0.8;font-size:13px}
-.file{color:#00ccff;font-size:12px}
+
+.delete{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:red;
+  border:none;
+  color:white;
+  padding:5px 8px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:12px;
+}
 </style>
 </head>
 <body>
@@ -131,9 +144,8 @@ button:hover{
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// 🔧 FIREBASE CONFIG (UZUPEŁNIJ)
 const firebaseConfig = {
   apiKey: "TWOJ_KEY",
   authDomain: "TWOJ_PROJECT.firebaseapp.com",
@@ -145,16 +157,19 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// 👥 TYLKO TY
 const ALLOWED_USERS = [
   "twojemail@gmail.com"
 ];
+
+let currentUser = null;
 
 window.login = function(){
   signInWithPopup(auth, provider);
 };
 
 onAuthStateChanged(auth, (user)=>{
+  currentUser = user;
+
   if(user && ALLOWED_USERS.includes(user.email)){
     document.getElementById("form").style.display="block";
     loadMods();
@@ -178,17 +193,25 @@ window.addMod = async function(){
   loadMods();
 };
 
+window.deleteMod = async function(id){
+  await deleteDoc(doc(db,"mods",id));
+  loadMods();
+};
+
 async function loadMods(){
   const q = query(collection(db,"mods"), orderBy("time","desc"));
   const snap = await getDocs(q);
 
   const box = document.getElementById("mods");
   box.innerHTML="";
-localStorage.clear();
-  snap.forEach(doc=>{
-    const m = doc.data();
+
+  snap.forEach(d=>{
+    const m = d.data();
+
     box.innerHTML += `
       <div class="card">
+        ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
+          `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
         <div class="card-body">
           <div class="title">${m.name}</div>
           <div class="desc">${m.desc}</div>
