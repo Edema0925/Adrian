@@ -125,7 +125,7 @@ button:hover{
   <div class="sub">Firebase Mod System</div>
 
   <div class="login">
-    <button onclick="login()">Zaloguj sie</button>
+    <button onclick="login()">Zaloguj się</button>
   </div>
 
   <div class="form" id="form">
@@ -187,39 +187,48 @@ onAuthStateChanged(auth, (user)=>{
 
 window.addMod = async function(){
 
-  const name = document.getElementById("name").value;
-  const desc = document.getElementById("desc").value;
-  const imageFile = document.getElementById("imageFile").files[0];
-  const modFile = document.getElementById("modFile").files[0];
+  try {
 
-  if(!name) return;
+    const name = document.getElementById("name").value;
+    const desc = document.getElementById("desc").value;
+    const imageFile = document.getElementById("imageFile").files[0];
+    const modFile = document.getElementById("modFile").files[0];
 
-  let imageUrl = "";
-  let fileUrl = "";
+    if(!name) return;
 
-  // IMAGE UPLOAD
-  if(imageFile){
-    const imgRef = ref(storage, "images/" + Date.now() + imageFile.name);
-    await uploadBytes(imgRef, imageFile);
-    imageUrl = await getDownloadURL(imgRef);
+    let imageUrl = "";
+    let fileUrl = "";
+
+    if(imageFile){
+      const imgRef = ref(storage, "images/" + Date.now() + imageFile.name);
+      await uploadBytes(imgRef, imageFile);
+      imageUrl = await getDownloadURL(imgRef);
+    }
+
+    if(modFile){
+      const fileRef = ref(storage, "mods/" + Date.now() + modFile.name);
+      await uploadBytes(fileRef, modFile);
+      fileUrl = await getDownloadURL(fileRef);
+    }
+
+    await addDoc(collection(db,"mods"),{
+      name,
+      desc,
+      imageUrl,
+      fileUrl,
+      time: Date.now()
+    });
+
+    document.getElementById("name").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("imageFile").value = "";
+    document.getElementById("modFile").value = "";
+
+    await loadMods();
+
+  } catch (e) {
+    console.error("ERROR ADD MOD:", e);
   }
-
-  // MOD FILE UPLOAD
-  if(modFile){
-    const fileRef = ref(storage, "mods/" + Date.now() + modFile.name);
-    await uploadBytes(fileRef, modFile);
-    fileUrl = await getDownloadURL(fileRef);
-  }
-
-  await addDoc(collection(db,"mods"),{
-    name,
-    desc,
-    imageUrl,
-    fileUrl,
-    time: Date.now()
-  });
-
-  loadMods();
 };
 
 window.deleteMod = async function(id){
@@ -228,36 +237,46 @@ window.deleteMod = async function(id){
 };
 
 async function loadMods(){
-  const q = query(collection(db,"mods"), orderBy("time","desc"));
-  const snap = await getDocs(q);
 
-  const box = document.getElementById("mods");
-  box.innerHTML="";
+  try {
 
-  snap.forEach(d=>{
-    const m = d.data();
+    const q = query(collection(db,"mods"), orderBy("time","desc"));
+    const snap = await getDocs(q);
 
-    box.innerHTML += `
-      <div class="card">
+    const box = document.getElementById("mods");
+    box.innerHTML="";
 
-        ${m.imageUrl ? `<img src="${m.imageUrl}">` : ""}
+    console.log("MODS:", snap.size);
 
-        ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
-          `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
+    snap.forEach(d=>{
+      const m = d.data();
 
-        <div class="title">${m.name}</div>
-        <div class="desc">${m.desc}</div>
+      box.innerHTML += `
+        <div class="card">
 
-        ${m.fileUrl ? `
-          <a href="${m.fileUrl}" target="_blank">
-            <button style="margin-top:10px;width:100%;">
-              ⬇ Pobierz plik
-            </button>
-          </a>
-        ` : ""}
-      </div>
-    `;
-  });
+          ${m.imageUrl ? `<img src="${m.imageUrl}">` : ""}
+
+          ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
+            `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
+
+          <div class="title">${m.name || ""}</div>
+          <div class="desc">${m.desc || ""}</div>
+
+          ${m.fileUrl ? `
+            <a href="${m.fileUrl}" target="_blank">
+              <button style="margin-top:10px;width:100%;">
+                ⬇ Pobierz plik
+              </button>
+            </a>
+          ` : ""}
+
+        </div>
+      `;
+    });
+
+  } catch (e) {
+    console.error("LOAD ERROR:", e);
+  }
 }
 
 </script>
