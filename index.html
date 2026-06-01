@@ -5,28 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FC26 Mods</title>
 
-<style>/* ===== GLOBAL ===== */
+
+
+<style>
+/* GLOBAL FIX */
+*{
+    box-sizing:border-box;
+}
+
 /* ===== GLOBAL ===== */
 body{
     margin:0;
-    font-family: 'Inter', Arial, sans-serif;
-    color:#d1d1d6;
+    font-family:'Inter', Arial, sans-serif;
+    color:#cfcfd4;
     overflow-x:hidden;
 
     background:
-        linear-gradient(135deg, rgba(0,0,0,.85), rgba(0,0,0,.4)),
+        linear-gradient(135deg, rgba(0,0,0,.9), rgba(0,0,0,.6)),
         url("https://wallpapers.com/images/hd/ea-sports-fc-24-4k-8jz8z7x6q7z7z7x6.jpg")
         center/cover no-repeat fixed;
 }
 
-/* Matowy glow */
+/* Subtelny matowy glow */
 body::before{
     content:"";
     position:fixed;
     inset:0;
     background:
-        radial-gradient(circle at 30% 10%, rgba(255,255,255,0.05), transparent 60%),
-        radial-gradient(circle at bottom, rgba(0,0,0,0.7), transparent 70%);
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.04), transparent 60%),
+        radial-gradient(circle at bottom, rgba(0,0,0,0.8), transparent 70%);
     z-index:-1;
 }
 
@@ -37,8 +44,8 @@ body::before{
     align-items:center;
     padding:15px 25px;
 
-    background:rgba(26,26,29,.55);
-    backdrop-filter:blur(20px);
+    background:rgba(13,13,15,.6);
+    backdrop-filter:blur(18px);
     border-bottom:1px solid rgba(255,255,255,.05);
 }
 
@@ -46,48 +53,47 @@ body::before{
     font-size:20px;
     font-weight:900;
     letter-spacing:4px;
-    color:#d1d1d6;
-    text-shadow:0 0 8px rgba(255,255,255,.1);
+    color:#cfcfd4;
 }
 
 .menu{
     display:flex;
     gap:20px;
     font-size:14px;
-    opacity:.8;
+    opacity:.75;
 }
 
 /* ===== CONTAINER ===== */
 .container{
+    width:100%;
     max-width:1200px;
-    margin:auto;
-    padding:25px;
+    margin:0 auto;
+    padding:20px;
 }
 
 /* ===== TITLE ===== */
 h1{
-    font-size:32px;
+    font-size:30px;
     text-transform:uppercase;
-    letter-spacing:5px;
-    color:#d1d1d6;
+    letter-spacing:4px;
+    color:#cfcfd4;
     margin-bottom:5px;
-    text-shadow:0 0 10px rgba(255,255,255,.1);
 }
 
 .sub{
-    opacity:.7;
+    opacity:.6;
     margin-bottom:25px;
 }
 
 /* ===== FORM ===== */
 .form{
     display:none;
-    background:rgba(42,42,49,.55);
-    border:1px solid rgba(255,255,255,.08);
+    background:rgba(26,26,29,.55);
+    border:1px solid rgba(255,255,255,.06);
     border-radius:16px;
-    padding:18px;
+    padding:20px;
     margin-bottom:25px;
-    backdrop-filter:blur(12px);
+    backdrop-filter:blur(10px);
 }
 
 /* ===== INPUTS ===== */
@@ -98,14 +104,14 @@ input, textarea{
     border-radius:12px;
     border:1px solid rgba(255,255,255,.08);
     background:rgba(0,0,0,.45);
-    color:#d1d1d6;
+    color:#cfcfd4;
     outline:none;
     transition:.2s;
 }
 
 input:focus, textarea:focus{
-    border-color:#8f8fa3;
-    box-shadow:0 0 10px rgba(143,143,163,.3);
+    border-color:#7a7a85;
+    box-shadow:0 0 8px rgba(122,122,133,.25);
 }
 
 /* ===== BUTTON ===== */
@@ -118,38 +124,39 @@ button{
     cursor:pointer;
     font-weight:700;
     letter-spacing:1px;
-    background:linear-gradient(135deg,#3c3c45,#2a2a31);
-    color:#d1d1d6;
+    background:linear-gradient(135deg,#2a2a2e,#1a1a1d);
+    color:#cfcfd4;
     transition:.25s;
 }
 
 button:hover{
     transform:translateY(-3px);
-    box-shadow:0 0 18px rgba(143,143,163,.3);
+    box-shadow:0 0 15px rgba(122,122,133,.25);
 }
 
 /* ===== GRID ===== */
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:20px;
+    width:100%;
 }
 
 /* ===== CARD ===== */
 .card{
-    background:rgba(26,26,29,.55);
-    border:1px solid rgba(255,255,255,.08);
+    background:rgba(13,13,15,.55);
+    border:1px solid rgba(255,255,255,.06);
     border-radius:18px;
     overflow:hidden;
     transition:.25s;
     position:relative;
-    backdrop-filter:blur(12px);
+    backdrop-filter:blur(10px);
 }
 
 .card:hover{
-    transform:translateY(-8px) scale(1.02);
-    border-color:#8f8fa3;
-    box-shadow:0 0 25px rgba(143,143,163,.3);
+    transform:translateY(-6px) scale(1.02);
+    border-color:#7a7a85;
+    box-shadow:0 0 20px rgba(122,122,133,.25);
 }
 
 /* IMAGE */
@@ -169,7 +176,7 @@ button:hover{
     font-size:17px;
     font-weight:800;
     letter-spacing:1px;
-    color:#d1d1d6;
+    color:#cfcfd4;
 }
 
 .desc{
@@ -198,6 +205,7 @@ button:hover{
     transform:scale(1.1);
 }
 
+    
 </style>
 
 <body>
