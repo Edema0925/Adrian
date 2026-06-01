@@ -306,9 +306,6 @@ button:hover{
 
     <h1>FC26 Mods</h1>
     <div class="sub">Upload + Download System</div>
-    <div class="sub">Upload + Download System</div>
-
-<input id="search" placeholder="Szukaj moda..." oninput="loadMods()" style="width:100%;padding:12px;margin-bottom:15px;border-radius:10px;">
 
     <button onclick="login()">Zaloguj się przez Google</button>
 
@@ -363,7 +360,7 @@ onAuthStateChanged(auth, (user) => {
         (user && ALLOWED_USERS.includes(user.email)) ? "block" : "none";
 
     loadMods();
-}); 
+});
 
 function toBase64(file){
     return new Promise((resolve, reject) => {
@@ -450,55 +447,6 @@ async function loadMods(){
             </div>
         `;
     });
-    async function loadMods(){
-
-    const loader = document.getElementById("loader");
-    const box = document.getElementById("mods");
-    const search = document.getElementById("search").value.toLowerCase();
-
-    loader.style.display = "block";
-    box.innerHTML = "";
-
-    const q = query(collection(db, "mods"), orderBy("time","desc"));
-    const snap = await getDocs(q);
-
-    snap.forEach((d) => {
-        const m = d.data();
-
-        // 🔍 FILTR WYSZUKIWANIA
-        if(
-            search &&
-            !m.name.toLowerCase().includes(search) &&
-            !m.desc.toLowerCase().includes(search)
-        ){
-            return;
-        }
-
-        box.innerHTML += `
-            <div class="card">
-                ${m.imgUrl ? `<img src="${m.imgUrl}">` : ""}
-                <div class="card-content">
-                    ${
-                        currentUser && ALLOWED_USERS.includes(currentUser.email)
-                        ? `<button class="delete" onclick="deleteMod('${d.id}')">×</button>`
-                        : ""
-                    }
-                    <div class="title">${m.name}</div>
-                    <div class="desc">${m.desc || ""}</div>
-                    ${
-                        m.fileUrl
-                        ? `<a href="${m.fileUrl}" target="_blank">
-                            <button>⬇ Pobierz</button>
-                          </a>`
-                        : ""
-                    }
-                </div>
-            </div>
-        `;
-    });
-
-    loader.style.display = "none";
-}
 
     loader.style.display = "none";
 }
