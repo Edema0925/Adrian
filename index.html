@@ -402,6 +402,13 @@ window.addMod = async function(){
 };
 
 
+window.deleteMod = async function(id){
+    if(confirm("Usunąć moda?")){
+        await deleteDoc(doc(db, "mods", id));
+        loadMods();
+    }
+};
+    
 
 async function loadMods(){
 
