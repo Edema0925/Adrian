@@ -121,20 +121,20 @@ button{
 
     <button onclick="login()">Zaloguj się przez Google</button>
 
-    <div class="form" id="form">
-        <input id="name" placeholder="Nazwa moda">
+  <div class="form" id="form">
 
-        <textarea id="desc" placeholder="Opis moda"></textarea>
+    <input id="name" placeholder="Nazwa moda">
+    <textarea id="desc" placeholder="Opis moda"></textarea>
 
-        <input type="file" id="file">
+    <!-- LINK -->
+    <a href="#" onclick="document.getElementById('fileInput').click()">
+        Dodaj plik
+    </a>
 
- <a href="javascript:void(0)" onclick="document.getElementById('fileInput').click()">
-  Dodaj plik
-</a>
+    <!-- UKRYTY INPUT -->
+    <input type="file" id="fileInput" style="display:none">
 
-<input type="file" id="fileInput" style="display:none">
-    </div>
-
+</div>
     <div class="grid" id="mods"></div>
 
 </div>
