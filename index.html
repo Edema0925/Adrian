@@ -129,7 +129,6 @@ button{
 
         <input id="fileUrl" placeholder="Link do pliku (Google Drive / MediaFire / itp.)">
 
-        <!-- DODANY PRZYCISK -->
         <button onclick="addMod()">Dodaj moda</button>
 
     </div>
@@ -219,6 +218,8 @@ window.addMod = async function(){
             fileUrl,
             time: Date.now()
         });
+
+        alert("mod dodany ✔");
 
         document.getElementById("name").value = "";
         document.getElementById("desc").value = "";
