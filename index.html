@@ -121,13 +121,17 @@ button{
 
     <button onclick="login()">Zaloguj się przez Google</button>
 
- <div class="form" id="form">
+    <div class="form" id="form">
 
-    <input id="name" placeholder="Nazwa moda">
+        <input id="name" placeholder="Nazwa moda">
 
-    <textarea id="desc" placeholder="Opis moda"></textarea>
+        <textarea id="desc" placeholder="Opis moda"></textarea>
 
-    <input id="fileUrl" placeholder="Link do pliku (np. Google Drive, Mediafire)">
+        <input id="fileUrl" placeholder="Link do pliku (Google Drive / MediaFire / itp.)">
+
+    </div>
+
+    <div class="grid" id="mods"></div>
 
 </div>
 
@@ -153,13 +157,6 @@ import {
     doc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyC4GAAVlZEhZuUvsf5RVhHJYngcEjIrVdg",
   authDomain: "fc26mods.firebaseapp.com",
@@ -174,7 +171,6 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const provider = new GoogleAuthProvider();
 
@@ -183,7 +179,6 @@ const ALLOWED_USERS = [
 ];
 
 let currentUser = null;
-let selectedFile = null;
 
 window.login = () => {
     signInWithPopup(auth, provider);
@@ -202,36 +197,17 @@ onAuthStateChanged(auth, (user) => {
     loadMods();
 });
 
-document
-.getElementById("file")
-.addEventListener("change", (e) => {
-    selectedFile = e.target.files[0];
-});
-
 window.addMod = async function(){
 
     try{
 
         const name = document.getElementById("name").value.trim();
         const desc = document.getElementById("desc").value.trim();
+        const fileUrl = document.getElementById("fileUrl").value.trim();
 
         if(!name){
             alert("Podaj nazwę moda");
             return;
-        }
-
-        let fileUrl = "";
-
-        if(selectedFile){
-
-            const fileRef = ref(
-                storage,
-                "mods/" + Date.now() + "_" + selectedFile.name
-            );
-
-            await uploadBytes(fileRef, selectedFile);
-
-            fileUrl = await getDownloadURL(fileRef);
         }
 
         await addDoc(collection(db, "mods"), {
@@ -243,17 +219,13 @@ window.addMod = async function(){
 
         document.getElementById("name").value = "";
         document.getElementById("desc").value = "";
-        document.getElementById("file").value = "";
-
-        selectedFile = null;
+        document.getElementById("fileUrl").value = "";
 
         loadMods();
 
     }catch(err){
-
         console.error(err);
         alert(err.message);
-
     }
 };
 
@@ -303,11 +275,9 @@ async function loadMods(){
 
                 ${
                     m.fileUrl
-                    ? `
-                    <a href="${m.fileUrl}" target="_blank">
+                    ? `<a href="${m.fileUrl}" target="_blank">
                         <button>⬇ Pobierz</button>
-                    </a>
-                    `
+                      </a>`
                     : ""
                 }
 
