@@ -17,7 +17,6 @@ body{
     overflow-x:hidden;
 }
 
-/* CINEMATIC STADION BACKGROUND */
 body::before{
     content:"";
     position:fixed;
@@ -31,7 +30,6 @@ body::before{
     z-index:-2;
 }
 
-/* NEON LIGHT OVERLAY */
 body::after{
     content:"";
     position:fixed;
@@ -77,12 +75,6 @@ input, textarea{
     background:rgba(5,10,20,.7);
     color:white;
     outline:none;
-    transition:.2s;
-}
-
-input:focus, textarea:focus{
-    border-color:#00ff88;
-    box-shadow:0 0 15px rgba(0,255,136,.25);
 }
 
 textarea{ min-height:110px; }
@@ -96,12 +88,6 @@ button{
     cursor:pointer;
     font-weight:bold;
     background:linear-gradient(90deg,#00ff88,#00ccff);
-    box-shadow:0 0 18px rgba(0,255,200,.25);
-    transition:.2s;
-}
-
-button:hover{
-    transform:scale(1.03);
 }
 
 .form{
@@ -127,19 +113,21 @@ button:hover{
     border-radius:14px;
     transition:.25s;
     backdrop-filter:blur(8px);
+    display:flex;
+    gap:12px;
+    align-items:center;
 }
 
 .card:hover{
     transform:translateY(-5px);
     border-color:#00ff88;
-    box-shadow:0 0 20px rgba(0,255,136,.2);
 }
 
 .title{
     color:#00ff88;
     font-size:18px;
     font-weight:bold;
-    margin-bottom:8px;
+    margin-bottom:6px;
 }
 
 .desc{
@@ -152,8 +140,10 @@ button:hover{
     top:8px;
     right:8px;
     background:#ff2b2b;
+    border:none;
     border-radius:8px;
     padding:5px 8px;
+    color:white;
 }
 </style>
 </head>
@@ -170,10 +160,9 @@ button:hover{
     <div class="form" id="form">
 
         <input id="name" placeholder="Nazwa moda">
-
         <textarea id="desc" placeholder="Opis moda"></textarea>
-
-        <input id="fileUrl" placeholder="Link do pliku (Google Drive / MediaFire / itp.)">
+        <input id="fileUrl" placeholder="Link do pliku">
+        <input id="imgUrl" placeholder="Link do zdjęcia (opcjonalnie)">
 
         <button onclick="addMod()">Dodaj moda</button>
 
@@ -186,24 +175,8 @@ button:hover{
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    query,
-    orderBy,
-    deleteDoc,
-    doc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4GAAVlZEhZuUvsf5RVhHJYngcEjIrVdg",
@@ -216,121 +189,96 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 const provider = new GoogleAuthProvider();
 
-const ALLOWED_USERS = [
-    "adamskiadrian513@gmail.com"
-];
-
+const ALLOWED_USERS = ["adamskiadrian513@gmail.com"];
 let currentUser = null;
 
-window.login = () => {
-    signInWithPopup(auth, provider);
-};
+window.login = () => signInWithPopup(auth, provider);
 
 onAuthStateChanged(auth, (user) => {
-
     currentUser = user;
 
-    if (user && ALLOWED_USERS.includes(user.email)) {
-        document.getElementById("form").style.display = "block";
-    } else {
-        document.getElementById("form").style.display = "none";
-    }
+    document.getElementById("form").style.display =
+        (user && ALLOWED_USERS.includes(user.email)) ? "block" : "none";
 
     loadMods();
 });
 
 window.addMod = async function(){
 
-    try{
+    const name = document.getElementById("name").value.trim();
+    const desc = document.getElementById("desc").value.trim();
+    const fileUrl = document.getElementById("fileUrl").value.trim();
+    const imgUrl = document.getElementById("imgUrl").value.trim();
 
-        const name = document.getElementById("name").value.trim();
-        const desc = document.getElementById("desc").value.trim();
-        const fileUrl = document.getElementById("fileUrl").value.trim();
+    if(!name) return alert("Podaj nazwę moda");
 
-        if(!name){
-            alert("Podaj nazwę moda");
-            return;
-        }
+    await addDoc(collection(db, "mods"), {
+        name,
+        desc,
+        fileUrl,
+        imgUrl,
+        time: Date.now()
+    });
 
-        await addDoc(collection(db, "mods"), {
-            name,
-            desc,
-            fileUrl,
-            time: Date.now()
-        });
-
-        alert("mod dodany ✔");
-
-        document.getElementById("name").value = "";
-        document.getElementById("desc").value = "";
-        document.getElementById("fileUrl").value = "";
-
-        loadMods();
-
-    }catch(err){
-        console.error(err);
-        alert(err.message);
-    }
-};
-
-window.deleteMod = async function(id){
-
-    if(!confirm("Usunąć tego moda?")){
-        return;
-    }
-
-    await deleteDoc(doc(db, "mods", id));
+    document.getElementById("name").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("fileUrl").value = "";
+    document.getElementById("imgUrl").value = "";
 
     loadMods();
 };
 
+window.deleteMod = async function(id){
+    if(confirm("Usunąć moda?")){
+        await deleteDoc(doc(db, "mods", id));
+        loadMods();
+    }
+};
+
 async function loadMods(){
 
-    const q = query(
-        collection(db, "mods"),
-        orderBy("time", "desc")
-    );
-
+    const q = query(collection(db, "mods"), orderBy("time","desc"));
     const snap = await getDocs(q);
 
     const box = document.getElementById("mods");
-
     box.innerHTML = "";
 
     snap.forEach((d) => {
-
         const m = d.data();
 
         box.innerHTML += `
             <div class="card">
 
                 ${
-                    currentUser &&
-                    ALLOWED_USERS.includes(currentUser.email)
-                    ? `<button class="delete" onclick="deleteMod('${d.id}')">X</button>`
+                    m.imgUrl
+                    ? `<img src="${m.imgUrl}" style="width:80px;height:80px;object-fit:cover;border-radius:10px;">`
                     : ""
                 }
 
-                <div class="title">${m.name}</div>
+                <div style="flex:1; position:relative;">
 
-                <div class="desc">
-                    ${m.desc || ""}
+                    ${
+                        currentUser && ALLOWED_USERS.includes(currentUser.email)
+                        ? `<button class="delete" onclick="deleteMod('${d.id}')">X</button>`
+                        : ""
+                    }
+
+                    <div class="title">${m.name}</div>
+                    <div class="desc">${m.desc || ""}</div>
+
+                    ${
+                        m.fileUrl
+                        ? `<a href="${m.fileUrl}" target="_blank">
+                            <button>⬇ Pobierz</button>
+                          </a>`
+                        : ""
+                    }
+
                 </div>
-
-                ${
-                    m.fileUrl
-                    ? `<a href="${m.fileUrl}" target="_blank">
-                        <button>⬇ Pobierz</button>
-                      </a>`
-                    : ""
-                }
-
             </div>
         `;
     });
