@@ -1,14 +1,15 @@
+```html
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FC26 Mods</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
+  font-family:Arial,sans-serif;
   background:#05070d;
   color:white;
 }
@@ -26,18 +27,25 @@ h1{
 
 .sub{
   text-align:center;
-  opacity:0.6;
+  opacity:.7;
   margin-bottom:20px;
 }
 
-input,textarea{
+input,
+textarea{
   width:100%;
+  box-sizing:border-box;
   padding:10px;
   margin:6px 0;
   border-radius:10px;
   border:1px solid #00ff88;
-  background:rgba(0,0,0,0.5);
+  background:rgba(0,0,0,.5);
   color:white;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
 }
 
 button{
@@ -53,35 +61,53 @@ button{
 
 .form{
   display:none;
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,.6);
   padding:15px;
   border-radius:12px;
+  margin-bottom:20px;
 }
 
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:15px;
-  margin-top:20px;
 }
 
 .card{
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,.6);
   padding:10px;
   border-radius:12px;
   position:relative;
 }
 
-.title{color:#00ff88;font-weight:bold;}
-.desc{opacity:0.8;font-size:13px;margin:5px 0;}
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.title{
+  color:#00ff88;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.desc{
+  opacity:.85;
+  font-size:14px;
+  margin:8px 0;
+}
 
 .delete{
   position:absolute;
   top:8px;
   right:8px;
-  background:red;
   width:auto;
   padding:5px 8px;
+  background:red;
+  color:white;
 }
 </style>
 </head>
@@ -89,139 +115,181 @@ button{
 <body>
 
 <div class="container">
+
   <h1>FC26 Mods</h1>
-  <div class="sub">Upload + download system</div>
+  <div class="sub">Mody do FC26</div>
 
   <button onclick="login()">Zaloguj się</button>
 
   <div class="form" id="form">
 
     <input id="name" placeholder="Nazwa moda">
+
     <textarea id="desc" placeholder="Opis moda"></textarea>
-    <input type="file" id="file">
+
+    <input id="imageUrl" placeholder="Link do zdjęcia">
+
+    <input id="downloadLink" placeholder="Link do pobrania">
 
     <button onclick="addMod()">Dodaj mod</button>
+
   </div>
 
   <div class="grid" id="mods"></div>
+
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC4GAAVlZEhZuUvsf5RVhHJYngcEjIrVdg",
+  apiKey: "TWOJ_API_KEY",
   authDomain: "fc26mods.firebaseapp.com",
   projectId: "fc26mods",
-  storageBucket: "fc26mods.firebasestorage.app",
+  storageBucket: "fc26mods.appspot.com",
   messagingSenderId: "136509847285",
-  appId: "1:136509847285:web:d2d81cf7832194370d37bc"
+  appId: "TWOJ_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
+
 const provider = new GoogleAuthProvider();
 
-const ALLOWED_USERS = ["adamskiadrian513@gmail.com"];
+const ALLOWED_USERS = [
+  "adamskiadrian513@gmail.com"
+];
 
 let currentUser = null;
-let selectedFile = null;
 
-window.login = () => signInWithPopup(auth, provider);
+window.login = () => {
+  signInWithPopup(auth, provider);
+};
 
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth, (user) => {
+
   currentUser = user;
 
   if(user && ALLOWED_USERS.includes(user.email)){
-    document.getElementById("form").style.display="block";
-    loadMods();
-  } else {
-    document.getElementById("form").style.display="none";
+    document.getElementById("form").style.display = "block";
+  }else{
+    document.getElementById("form").style.display = "none";
   }
+
+  loadMods();
 });
 
-document.getElementById("file").addEventListener("change",(e)=>{
-  selectedFile = e.target.files[0];
-});
+window.addMod = async () => {
 
-window.addMod = async function(){
+  try{
 
-  try {
-
-    const name = document.getElementById("name").value;
-    const desc = document.getElementById("desc").value;
+    const name = document.getElementById("name").value.trim();
+    const desc = document.getElementById("desc").value.trim();
+    const imageUrl = document.getElementById("imageUrl").value.trim();
+    const downloadLink = document.getElementById("downloadLink").value.trim();
 
     if(!name){
-      alert("Brak nazwy");
+      alert("Podaj nazwę moda");
       return;
-    }
-
-    let fileUrl = "";
-
-    if(selectedFile){
-      const fileRef = ref(storage, "mods/" + Date.now() + "_" + selectedFile.name);
-
-      await uploadBytes(fileRef, selectedFile);
-
-      fileUrl = await getDownloadURL(fileRef);
     }
 
     await addDoc(collection(db,"mods"),{
       name,
       desc,
-      fileUrl,
-      time: Date.now()
+      imageUrl,
+      downloadLink,
+      time:Date.now()
     });
 
     document.getElementById("name").value = "";
     document.getElementById("desc").value = "";
-    document.getElementById("file").value = "";
-    selectedFile = null;
+    document.getElementById("imageUrl").value = "";
+    document.getElementById("downloadLink").value = "";
 
     loadMods();
 
-  } catch(e){
-    console.error(e);
-    alert(e.message);
+  }catch(err){
+    console.error(err);
+    alert(err.message);
   }
 };
 
-window.deleteMod = async function(id){
+window.deleteMod = async(id)=>{
+
+  if(!confirm("Usunąć moda?")) return;
+
   await deleteDoc(doc(db,"mods",id));
+
   loadMods();
 };
 
 async function loadMods(){
 
-  const q = query(collection(db,"mods"), orderBy("time","desc"));
-  const snap = await getDocs(q);
-
   const box = document.getElementById("mods");
+
   box.innerHTML = "";
 
+  const q = query(
+    collection(db,"mods"),
+    orderBy("time","desc")
+  );
+
+  const snap = await getDocs(q);
+
   snap.forEach(d=>{
+
     const m = d.data();
 
     box.innerHTML += `
       <div class="card">
 
-        ${currentUser && ALLOWED_USERS.includes(currentUser.email) ? 
-          `<button class="delete" onclick="deleteMod('${d.id}')">X</button>` : ""}
+        ${
+          currentUser &&
+          ALLOWED_USERS.includes(currentUser.email)
+            ? `<button class="delete" onclick="deleteMod('${d.id}')">X</button>`
+            : ""
+        }
+
+        ${
+          m.imageUrl
+            ? `<img src="${m.imageUrl}" alt="${m.name}">`
+            : ""
+        }
 
         <div class="title">${m.name}</div>
-        <div class="desc">${m.desc}</div>
 
-        ${m.fileUrl ? `
-          <a href="${m.fileUrl}" target="_blank">
-            <button>⬇ Pobierz</button>
-          </a>
-        ` : ""}
+        <div class="desc">${m.desc || ""}</div>
+
+        ${
+          m.downloadLink
+            ? `
+              <a href="${m.downloadLink}" target="_blank">
+                <button>⬇ Pobierz</button>
+              </a>
+            `
+            : ""
+        }
 
       </div>
     `;
@@ -232,3 +300,4 @@ async function loadMods(){
 
 </body>
 </html>
+```
