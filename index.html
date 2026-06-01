@@ -7,197 +7,200 @@
 
 <style>
 /* GLOBAL FIX */
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
 /* ===== GLOBAL ===== */
-body{
-    margin:0;
-    font-family:'Inter', Arial, sans-serif;
-    color:#cfcfd4;
-    overflow-x:hidden;
-    position:fixed;
+body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #cfcfd4;
+    overflow-x: hidden;
+    position: fixed;
     background:
         linear-gradient(135deg, rgba(0,0,0,.9), rgba(0,0,0,.6)),
         url("https://wallpapers.com/images/hd/ea-sports-fc-24-4k-8jz8z7x6q7z7z7x6.jpg")
         center/cover no-repeat fixed;
 }
 
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
+/* Subtelny matowy glow */
+body::before {
+    content: "";
+    inset: 0;
     background:
         radial-gradient(circle at 20% 10%, rgba(255,255,255,0.04), transparent 60%),
         radial-gradient(circle at bottom, rgba(0,0,0,0.8), transparent 70%);
-    z-index:-1;
+    z-index: -1;
 }
 
 /* ===== TOP BAR ===== */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px 25px;
-    background:rgba(13,13,15,.6);
-    backdrop-filter:blur(18px);
-    border-bottom:1px solid rgba(255,255,255,.05);
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(13,13,15,.6);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,.05);
 }
 
-.logo{
-    font-size:20px;
-    font-weight:900;
-    letter-spacing:4px;
-    color:#cfcfd4;
+.logo {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #cfcfd4;
 }
 
-.menu{
-    display:flex;
-    gap:20px;
-    font-size:14px;
-    opacity:.75;
+.menu {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    opacity: .75;
 }
 
 /* ===== CONTAINER ===== */
-.container{
-    width:100%;
-    max-width:1200px;
-    margin:0 auto;
-    padding:20px;
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 /* ===== TITLE ===== */
-h1{
-    font-size:30px;
-    text-transform:uppercase;
-    letter-spacing:4px;
-    color:#cfcfd4;
-    margin-bottom:5px;
+h1 {
+    font-size: 30px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #cfcfd4;
+    margin-bottom: 5px;
 }
 
-.sub{
-    opacity:.6;
-    margin-bottom:25px;
+.sub {
+    opacity: .6;
+    margin-bottom: 25px;
 }
 
 /* ===== FORM ===== */
-.form{
-    display:none;
-    background:rgba(26,26,29,.55);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:25px;
-    backdrop-filter:blur(10px);
+.form {
+    display: none;
+    background: rgba(26,26,29,.55);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    backdrop-filter: blur(10px);
 }
 
 /* ===== INPUTS ===== */
 input,
-textarea{
-    width:100%;
-    padding:14px;
-    margin:8px 0;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,.08);
-    background:rgba(0,0,0,.45);
-    color:#cfcfd4;
-    outline:none;
-    transition:.2s;
+textarea {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(0,0,0,.45);
+    color: #cfcfd4;
+    outline: none;
+    transition: .2s;
 }
 
 input:focus,
-textarea:focus{
-    border-color:#7a7a85;
-    box-shadow:0 0 8px rgba(122,122,133,.25);
+textarea:focus {
+    border-color: #7a7a85;
+    box-shadow: 0 0 8px rgba(122,122,133,.25);
 }
 
 /* ===== BUTTON ===== */
-button{
-    width:100%;
-    padding:14px;
-    margin-top:12px;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:700;
-    letter-spacing:1px;
-    background:linear-gradient(135deg,#2a2a2e,#1a1a1d);
-    color:#cfcfd4;
-    transition:.25s;
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg,#2a2a2e,#1a1a1d);
+    color: #cfcfd4;
+    transition: .25s;
 }
 
-button:hover{
-    transform:translateY(-3px);
-    box-shadow:0 0 15px rgba(122,122,133,.25);
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(122,122,133,.25);
 }
 
 /* ===== GRID ===== */
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:20px;
-    width:100%;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    gap: 20px;
+    width: 100%;
 }
 
 /* ===== CARD ===== */
-.card{
-    background:rgba(13,13,15,.55);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:18px;
-    overflow:hidden;
-    transition:.25s;
-    position:relative;
-    backdrop-filter:blur(10px);
+.card {
+    background: rgba(13,13,15,.55);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: .25s;
+    position: relative;
+    backdrop-filter: blur(10px);
 }
 
-.card:hover{
-    transform:translateY(-6px) scale(1.02);
-    border-color:#7a7a85;
-    box-shadow:0 0 20px rgba(122,122,133,.25);
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: #7a7a85;
+    box-shadow: 0 0 20px rgba(122,122,133,.25);
 }
 
-.card img{
-    width:100%;
-    height:190px;
-    object-fit:cover;
-    filter:contrast(1.1) brightness(.9);
+/* IMAGE */
+.card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    filter: contrast(1.1) brightness(.9);
 }
 
-.card-content{
-    padding:14px;
+/* CONTENT */
+.card-content {
+    padding: 14px;
 }
 
-.title{
-    font-size:17px;
-    font-weight:800;
-    letter-spacing:1px;
-    color:#cfcfd4;
+.title {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #cfcfd4;
 }
 
-.desc{
-    opacity:.75;
-    font-size:14px;
-    margin-top:6px;
+.desc {
+    opacity: .75;
+    font-size: 14px;
+    margin-top: 6px;
 }
 
-.delete{
-    position:absolute;
-    top:12px;
-    right:12px;
-    width:32px;
-    height:32px;
-    border-radius:10px;
-    background:rgba(0,0,0,.6);
-    border:1px solid rgba(255,255,255,.1);
-    color:white;
-    cursor:pointer;
-    transition:.2s;
+/* DELETE BUTTON */
+.delete {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(0,0,0,.6);
+    border: 1px solid rgba(255,255,255,.1);
+    color: white;
+    cursor: pointer;
+    transition: .2s;
 }
 
-.delete:hover{
-    background:#ff0033;
-    transform:scale(1.1);
+.delete:hover {
+    background: #ff0033;
+    transform: scale(1.1);
 }
 </style>
 </head>
@@ -262,7 +265,7 @@ onAuthStateChanged(auth, (user) => {
     loadMods();
 });
 
-function toBase64(file){
+function toBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -271,16 +274,16 @@ function toBase64(file){
     });
 }
 
-window.addMod = async function(){
+window.addMod = async function() {
     const name = document.getElementById("name").value.trim();
     const desc = document.getElementById("desc").value.trim();
     const fileUrl = document.getElementById("fileUrl").value.trim();
     const imgFile = document.getElementById("imgFile").files[0];
 
-    if(!name) return alert("Podaj nazwę moda");
+    if (!name) return alert("Podaj nazwę moda");
 
     let imgBase64 = "";
-    if(imgFile){
+    if (imgFile) {
         imgBase64 = await toBase64(imgFile);
     }
 
@@ -300,15 +303,15 @@ window.addMod = async function(){
     loadMods();
 };
 
-window.deleteMod = async function(id){
-    if(confirm("Usunąć moda?")){
+window.deleteMod = async function(id) {
+    if (confirm("Usunąć moda?")) {
         await deleteDoc(doc(db, "mods", id));
         loadMods();
     }
 };
 
-async function loadMods(){
-    const q = query(collection(db, "mods"), orderBy("time","desc"));
+async function loadMods() {
+    const q = query(collection(db, "mods"), orderBy("time", "desc"));
     const snap = await getDocs(q);
 
     const box = document.getElementById("mods");
