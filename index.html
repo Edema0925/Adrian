@@ -66,6 +66,7 @@ h1{
     margin-bottom:20px;
 }
 
+/* INPUTS */
 input, textarea{
     width:100%;
     padding:12px;
@@ -79,6 +80,7 @@ input, textarea{
 
 textarea{ min-height:110px; }
 
+/* BUTTON */
 button{
     width:100%;
     padding:12px;
@@ -108,39 +110,38 @@ button{
     margin-top:20px;
 }
 
-/* CARD - NOWY LOOK */
+/* CARD */
 .card{
-    background:rgba(10,15,25,.8);
-    border:1px solid rgba(0,255,136,.15);
-    border-radius:16px;
+    background:rgba(10,15,25,.85);
+    border:2px solid rgba(0,255,136,.18);
+    border-radius:18px;
     overflow:hidden;
     transition:.25s;
     backdrop-filter:blur(10px);
     display:flex;
     flex-direction:column;
+    position:relative;
 }
 
 .card:hover{
     transform:translateY(-6px);
     border-color:#00ff88;
+    box-shadow:0 0 25px rgba(0,255,136,.15);
 }
 
-/* ZDJĘCIE WIĘKSZE */
+/* IMAGE */
 .card img{
     width:100%;
-    height:180px;
+    height:190px;
     object-fit:cover;
-    display:block;
-    filter:saturate(1.2) contrast(1.1);
 }
 
 /* CONTENT */
 .card-content{
     padding:12px;
-    position:relative;
 }
 
-/* TYTUŁ */
+/* TITLE */
 .title{
     color:#00ff88;
     font-size:18px;
@@ -148,36 +149,35 @@ button{
     margin-bottom:6px;
 }
 
-/* OPIS */
+/* DESC */
 .desc{
     opacity:.8;
     font-size:13px;
     margin-bottom:10px;
 }
 
-/* DELETE - MAŁY IKONOWY PRZYCISK */
+/* DELETE BUTTON */
 .delete{
     position:absolute;
     top:10px;
     right:10px;
-    width:26px;
-    height:26px;
-    padding:0;
-    border-radius:6px;
+    width:32px;
+    height:32px;
+    border-radius:8px;
     background:#ff2b2b;
     color:white;
-    font-size:14px;
+    font-size:16px;
     font-weight:bold;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    opacity:.85;
+    opacity:.9;
 }
 
 .delete:hover{
+    transform:scale(1.15);
     opacity:1;
-    transform:scale(1.1);
 }
 </style>
 </head>
@@ -195,8 +195,8 @@ button{
 
         <input id="name" placeholder="Nazwa moda">
         <textarea id="desc" placeholder="Opis moda"></textarea>
-        <input id="fileUrl" placeholder="Link do pliku">
-        <input id="imgUrl" placeholder="Link do zdjęcia (opcjonalnie)">
+        <input id="fileUrl" placeholder="Link do pliku (download)">
+        <input id="imgFile" type="file" accept="image/*">
 
         <button onclick="addMod()">Dodaj moda</button>
 
@@ -241,27 +241,42 @@ onAuthStateChanged(auth, (user) => {
     loadMods();
 });
 
+function toBase64(file){
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
 window.addMod = async function(){
 
     const name = document.getElementById("name").value.trim();
     const desc = document.getElementById("desc").value.trim();
     const fileUrl = document.getElementById("fileUrl").value.trim();
-    const imgUrl = document.getElementById("imgUrl").value.trim();
+    const imgFile = document.getElementById("imgFile").files[0];
 
     if(!name) return alert("Podaj nazwę moda");
+
+    let imgBase64 = "";
+
+    if(imgFile){
+        imgBase64 = await toBase64(imgFile);
+    }
 
     await addDoc(collection(db, "mods"), {
         name,
         desc,
         fileUrl,
-        imgUrl,
+        imgUrl: imgBase64,
         time: Date.now()
     });
 
     document.getElementById("name").value = "";
     document.getElementById("desc").value = "";
     document.getElementById("fileUrl").value = "";
-    document.getElementById("imgUrl").value = "";
+    document.getElementById("imgFile").value = "";
 
     loadMods();
 };
@@ -287,17 +302,13 @@ async function loadMods(){
         box.innerHTML += `
             <div class="card">
 
-                ${
-                    m.imgUrl
-                    ? `<img src="${m.imgUrl}" style="width:80px;height:80px;object-fit:cover;border-radius:10px;">`
-                    : ""
-                }
+                ${m.imgUrl ? `<img src="${m.imgUrl}">` : ""}
 
-                <div style="flex:1; position:relative;">
+                <div class="card-content">
 
                     ${
                         currentUser && ALLOWED_USERS.includes(currentUser.email)
-                        ? `<button class="delete" onclick="deleteMod('${d.id}')">X</button>`
+                        ? `<button class="delete" onclick="deleteMod('${d.id}')">×</button>`
                         : ""
                     }
 
