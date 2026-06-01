@@ -5,75 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FC26 Mods</title>
 
-<!-- ===== CSS ULEPSZONY FIFA CAREER MODE ===== -->
-<style>
-body{
+<style>body{
     margin:0;
     font-family: Arial, sans-serif;
     color:white;
-    background:url("logo.png") center/cover no-repeat fixed;
+
+    /* 🎮 FC / football cinematic background */
+    background:url("https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1920&q=80")
+    center/cover no-repeat fixed;
+
     overflow-x:hidden;
 }
 
+/* przyciemnienie */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.78);
+    background:rgba(0,0,0,.75);
     z-index:-1;
 }
 
-/* TOPBAR */
+/* ===== TOP BAR ===== */
 .topbar{
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:15px 25px;
-    background:rgba(0,0,0,.7);
-    border-bottom:1px solid rgba(255,255,255,.06);
+    background:rgba(0,0,0,.6);
+    border-bottom:1px solid rgba(255,255,255,.05);
     backdrop-filter:blur(10px);
 }
 
 .logo{
     font-size:18px;
     font-weight:bold;
-    letter-spacing:3px;
+    letter-spacing:2px;
+    color:#e5e5e5;
 }
 
-/* CONTAINER */
+.menu{
+    display:flex;
+    gap:15px;
+    font-size:13px;
+    opacity:.7;
+}
+
+/* ===== CONTAINER ===== */
 .container{
     max-width:1100px;
     margin:auto;
     padding:25px;
 }
 
+/* ===== TITLE ===== */
 h1{
+    font-size:26px;
     text-transform:uppercase;
     letter-spacing:3px;
     color:#dcdcdc;
+    margin-bottom:5px;
 }
 
-/* FORM */
+.sub{
+    opacity:.5;
+    margin-bottom:20px;
+}
+
+/* ===== FORM ===== */
 .form{
     display:none;
-    background:rgba(10,10,10,.7);
-    padding:15px;
+    background:rgba(10,10,10,.75);
+    border:1px solid rgba(255,255,255,.06);
     border-radius:12px;
-    border:1px solid rgba(255,255,255,.08);
+    padding:15px;
+    margin-bottom:20px;
 }
 
-/* INPUTS */
+/* ===== INPUTS ===== */
 input, textarea{
     width:100%;
     padding:12px;
     margin:6px 0;
     border-radius:10px;
-    border:1px solid rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.08);
     background:rgba(0,0,0,.6);
     color:white;
 }
 
-/* BUTTON */
+/* ===== BUTTON ===== */
 button{
     width:100%;
     padding:12px;
@@ -83,31 +103,37 @@ button{
     cursor:pointer;
     font-weight:bold;
     background:#1f1f1f;
-    color:white;
+    color:#e5e5e5;
+    transition:.2s;
 }
 
-/* GRID */
+button:hover{
+    background:#2a2a2a;
+}
+
+/* ===== GRID ===== */
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:15px;
-    margin-top:20px;
 }
 
-/* CARD */
+/* ===== CARD ===== */
 .card{
     background:rgba(10,10,10,.85);
-    border:1px solid rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.06);
     border-radius:12px;
     overflow:hidden;
     transition:.2s;
+    position:relative;
 }
 
 .card:hover{
     transform:translateY(-4px);
-    border-color:rgba(255,255,255,.2);
+    border-color:rgba(255,255,255,.15);
 }
 
+/* IMAGE */
 .card img{
     width:100%;
     height:180px;
@@ -122,13 +148,13 @@ button{
 .title{
     font-size:16px;
     font-weight:bold;
-    color:#eaeaea;
+    letter-spacing:1px;
 }
 
 .desc{
-    opacity:.7;
+    opacity:.6;
     font-size:13px;
-    margin-top:6px;
+    margin-top:5px;
 }
 
 /* DELETE */
@@ -140,10 +166,9 @@ button{
     height:28px;
     border-radius:6px;
     background:#2b2b2b;
-    border:none;
+    border:1px solid rgba(255,255,255,.1);
     color:white;
-}
-</style>
+}</style>
 </head>
 
 <body>
