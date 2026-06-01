@@ -6,108 +6,108 @@
 <title>FC26 Mods</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #05070d;
-    color: white;
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#05070d;
+    color:white;
 }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
 }
 
-h1 {
-    text-align: center;
-    color: #00ff88;
+h1{
+    text-align:center;
+    color:#00ff88;
 }
 
-.sub {
-    text-align: center;
-    opacity: .7;
-    margin-bottom: 20px;
+.sub{
+    text-align:center;
+    opacity:.7;
+    margin-bottom:20px;
 }
 
 input,
-textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px;
-    margin: 6px 0;
-    border-radius: 10px;
-    border: 1px solid #00ff88;
-    background: rgba(0,0,0,.5);
-    color: white;
+textarea{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px;
+    margin:6px 0;
+    border-radius:10px;
+    border:1px solid #00ff88;
+    background:rgba(0,0,0,.5);
+    color:white;
 }
 
-textarea {
-    min-height: 100px;
-    resize: vertical;
+textarea{
+    min-height:100px;
+    resize:vertical;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    background: linear-gradient(90deg, #00ff88, #00ccff);
+button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    background:linear-gradient(90deg,#00ff88,#00ccff);
 }
 
-.form {
-    display: none;
-    background: rgba(0,0,0,.6);
-    padding: 15px;
-    border-radius: 12px;
-    margin-top: 20px;
+.form{
+    display:none;
+    background:rgba(0,0,0,.6);
+    padding:15px;
+    border-radius:12px;
+    margin-top:20px;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+    margin-top:20px;
 }
 
-.card {
-    background: rgba(0,0,0,.6);
-    border: 1px solid rgba(0,255,136,.2);
-    padding: 15px;
-    border-radius: 12px;
-    position: relative;
-    transition: .2s;
+.card{
+    background:rgba(0,0,0,.6);
+    border:1px solid rgba(0,255,136,.2);
+    padding:15px;
+    border-radius:12px;
+    position:relative;
+    transition:.2s;
 }
 
-.card:hover {
-    transform: translateY(-2px);
-    border-color: #00ff88;
+.card:hover{
+    transform:translateY(-2px);
+    border-color:#00ff88;
 }
 
-.title {
-    color: #00ff88;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 8px;
+.title{
+    color:#00ff88;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
 }
 
-.desc {
-    opacity: .8;
-    font-size: 13px;
-    margin-bottom: 12px;
+.desc{
+    opacity:.8;
+    font-size:13px;
+    margin-bottom:12px;
 }
 
-.delete {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: auto;
-    padding: 5px 8px;
-    background: red;
-    color: white;
+.delete{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:auto;
+    padding:5px 8px;
+    background:red;
+    color:white;
 }
 </style>
 </head>
@@ -123,8 +123,11 @@ button {
 
     <div class="form" id="form">
         <input id="name" placeholder="Nazwa moda">
+
         <textarea id="desc" placeholder="Opis moda"></textarea>
+
         <input type="file" id="file">
+
         <button onclick="addMod()">Dodaj mod</button>
     </div>
 
@@ -165,7 +168,7 @@ const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "fc26mods.firebaseapp.com",
     projectId: "fc26mods",
-    storageBucket: "fc26mods.firebasestorage.app",
+    storageBucket: "fc26mods.appspot.com",
     messagingSenderId: "136509847285",
     appId: "1:136509847285:web:d2d81cf7832194370d37bc"
 };
@@ -190,6 +193,7 @@ window.login = () => {
 };
 
 onAuthStateChanged(auth, (user) => {
+
     currentUser = user;
 
     if (user && ALLOWED_USERS.includes(user.email)) {
@@ -201,29 +205,35 @@ onAuthStateChanged(auth, (user) => {
     loadMods();
 });
 
-document.getElementById("file").addEventListener("change", (e) => {
+document
+.getElementById("file")
+.addEventListener("change", (e) => {
     selectedFile = e.target.files[0];
 });
 
-window.addMod = async function () {
-    try {
+window.addMod = async function(){
+
+    try{
+
         const name = document.getElementById("name").value.trim();
         const desc = document.getElementById("desc").value.trim();
 
-        if (!name) {
+        if(!name){
             alert("Podaj nazwę moda");
             return;
         }
 
         let fileUrl = "";
 
-        if (selectedFile) {
+        if(selectedFile){
+
             const fileRef = ref(
                 storage,
                 "mods/" + Date.now() + "_" + selectedFile.name
             );
 
             await uploadBytes(fileRef, selectedFile);
+
             fileUrl = await getDownloadURL(fileRef);
         }
 
@@ -242,33 +252,40 @@ window.addMod = async function () {
 
         loadMods();
 
-    } catch (err) {
+    }catch(err){
+
         console.error(err);
         alert(err.message);
+
     }
 };
 
-window.deleteMod = async function (id) {
-    if (!confirm("Usunąć tego moda?")) {
+window.deleteMod = async function(id){
+
+    if(!confirm("Usunąć tego moda?")){
         return;
     }
 
     await deleteDoc(doc(db, "mods", id));
+
     loadMods();
 };
 
-async function loadMods() {
+async function loadMods(){
+
     const q = query(
         collection(db, "mods"),
         orderBy("time", "desc")
     );
 
     const snap = await getDocs(q);
+
     const box = document.getElementById("mods");
 
     box.innerHTML = "";
 
     snap.forEach((d) => {
+
         const m = d.data();
 
         box.innerHTML += `
@@ -283,7 +300,9 @@ async function loadMods() {
 
                 <div class="title">${m.name}</div>
 
-                <div class="desc">${m.desc || ""}</div>
+                <div class="desc">
+                    ${m.desc || ""}
+                </div>
 
                 ${
                     m.fileUrl
