@@ -128,7 +128,11 @@ button{
 
         <input type="file" id="file">
 
-        <button onclick="addMod()">Dodaj mod</button>
+ <a href="javascript:void(0)" onclick="document.getElementById('fileInput').click()">
+  Dodaj plik
+</a>
+
+<input type="file" id="fileInput" style="display:none">
     </div>
 
     <div class="grid" id="mods"></div>
