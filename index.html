@@ -8,106 +8,107 @@
 
 <style>
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#05070d;
-  color:white;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#05070d;
+    color:white;
 }
 
 .container{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
 }
 
 h1{
-  text-align:center;
-  color:#00ff88;
+    text-align:center;
+    color:#00ff88;
 }
 
 .sub{
-  text-align:center;
-  opacity:.7;
-  margin-bottom:20px;
+    text-align:center;
+    opacity:.7;
+    margin-bottom:20px;
 }
 
 input,
 textarea{
-  width:100%;
-  box-sizing:border-box;
-  padding:10px;
-  margin:6px 0;
-  border-radius:10px;
-  border:1px solid #00ff88;
-  background:rgba(0,0,0,.5);
-  color:white;
+    width:100%;
+    box-sizing:border-box;
+    padding:10px;
+    margin:6px 0;
+    border-radius:10px;
+    border:1px solid #00ff88;
+    background:rgba(0,0,0,.5);
+    color:white;
 }
 
 textarea{
-  min-height:100px;
-  resize:vertical;
+    min-height:100px;
+    resize:vertical;
 }
 
 button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
-  background:linear-gradient(90deg,#00ff88,#00ccff);
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    background:linear-gradient(90deg,#00ff88,#00ccff);
 }
 
 .form{
-  display:none;
-  background:rgba(0,0,0,.6);
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:20px;
+    display:none;
+    background:rgba(0,0,0,.6);
+    padding:15px;
+    border-radius:12px;
+    margin-top:20px;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:15px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+    margin-top:20px;
 }
 
 .card{
-  background:rgba(0,0,0,.6);
-  padding:10px;
-  border-radius:12px;
-  position:relative;
+    background:rgba(0,0,0,.6);
+    border:1px solid rgba(0,255,136,.2);
+    padding:15px;
+    border-radius:12px;
+    position:relative;
+    transition:.2s;
 }
 
-.card img{
-  width:100%;
-  height:180px;
-  object-fit:cover;
-  border-radius:10px;
-  margin-bottom:10px;
+.card:hover{
+    transform:translateY(-2px);
+    border-color:#00ff88;
 }
 
 .title{
-  color:#00ff88;
-  font-weight:bold;
-  font-size:18px;
+    color:#00ff88;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
 }
 
 .desc{
-  opacity:.85;
-  font-size:14px;
-  margin:8px 0;
+    opacity:.8;
+    font-size:13px;
+    margin-bottom:12px;
 }
 
 .delete{
-  position:absolute;
-  top:8px;
-  right:8px;
-  width:auto;
-  padding:5px 8px;
-  background:red;
-  color:white;
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:auto;
+    padding:5px 8px;
+    background:red;
+    color:white;
 }
 </style>
 </head>
@@ -116,26 +117,22 @@ button{
 
 <div class="container">
 
-  <h1>FC26 Mods</h1>
-  <div class="sub">Mody do FC26</div>
+    <h1>FC26 Mods</h1>
+    <div class="sub">Upload + Download System</div>
 
-  <button onclick="login()">Zaloguj się</button>
+    <button onclick="login()">Zaloguj się przez Google</button>
 
-  <div class="form" id="form">
+    <div class="form" id="form">
+        <input id="name" placeholder="Nazwa moda">
 
-    <input id="name" placeholder="Nazwa moda">
+        <textarea id="desc" placeholder="Opis moda"></textarea>
 
-    <textarea id="desc" placeholder="Opis moda"></textarea>
+        <input type="file" id="file">
 
-    <input id="imageUrl" placeholder="Link do zdjęcia">
+        <button onclick="addMod()">Dodaj mod</button>
+    </div>
 
-    <input id="downloadLink" placeholder="Link do pobrania">
-
-    <button onclick="addMod()">Dodaj mod</button>
-
-  </div>
-
-  <div class="grid" id="mods"></div>
+    <div class="grid" id="mods"></div>
 
 </div>
 
@@ -144,156 +141,183 @@ button{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  orderBy,
-  deleteDoc,
-  doc
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    orderBy,
+    deleteDoc,
+    doc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
 const firebaseConfig = {
-  apiKey: "TWOJ_API_KEY",
-  authDomain: "fc26mods.firebaseapp.com",
-  projectId: "fc26mods",
-  storageBucket: "fc26mods.appspot.com",
-  messagingSenderId: "136509847285",
-  appId: "TWOJ_APP_ID"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "fc26mods.firebaseapp.com",
+    projectId: "fc26mods",
+    storageBucket: "fc26mods.firebasestorage.app",
+    messagingSenderId: "136509847285",
+    appId: "1:136509847285:web:d2d81cf7832194370d37bc"
 };
 
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const provider = new GoogleAuthProvider();
 
 const ALLOWED_USERS = [
-  "adamskiadrian513@gmail.com"
+    "adamskiadrian513@gmail.com"
 ];
 
 let currentUser = null;
+let selectedFile = null;
 
 window.login = () => {
-  signInWithPopup(auth, provider);
+    signInWithPopup(auth, provider);
 };
 
 onAuthStateChanged(auth, (user) => {
 
-  currentUser = user;
+    currentUser = user;
 
-  if(user && ALLOWED_USERS.includes(user.email)){
-    document.getElementById("form").style.display = "block";
-  }else{
-    document.getElementById("form").style.display = "none";
-  }
-
-  loadMods();
-});
-
-window.addMod = async () => {
-
-  try{
-
-    const name = document.getElementById("name").value.trim();
-    const desc = document.getElementById("desc").value.trim();
-    const imageUrl = document.getElementById("imageUrl").value.trim();
-    const downloadLink = document.getElementById("downloadLink").value.trim();
-
-    if(!name){
-      alert("Podaj nazwę moda");
-      return;
+    if (user && ALLOWED_USERS.includes(user.email)) {
+        document.getElementById("form").style.display = "block";
+    } else {
+        document.getElementById("form").style.display = "none";
     }
 
-    await addDoc(collection(db,"mods"),{
-      name,
-      desc,
-      imageUrl,
-      downloadLink,
-      time:Date.now()
-    });
-
-    document.getElementById("name").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("imageUrl").value = "";
-    document.getElementById("downloadLink").value = "";
-
     loadMods();
+});
 
-  }catch(err){
-    console.error(err);
-    alert(err.message);
-  }
+document
+.getElementById("file")
+.addEventListener("change", (e) => {
+    selectedFile = e.target.files[0];
+});
+
+window.addMod = async function(){
+
+    try{
+
+        const name = document.getElementById("name").value.trim();
+        const desc = document.getElementById("desc").value.trim();
+
+        if(!name){
+            alert("Podaj nazwę moda");
+            return;
+        }
+
+        let fileUrl = "";
+
+        if(selectedFile){
+
+            const fileRef = ref(
+                storage,
+                "mods/" + Date.now() + "_" + selectedFile.name
+            );
+
+            await uploadBytes(fileRef, selectedFile);
+
+            fileUrl = await getDownloadURL(fileRef);
+        }
+
+        await addDoc(collection(db, "mods"), {
+            name,
+            desc,
+            fileUrl,
+            time: Date.now()
+        });
+
+        document.getElementById("name").value = "";
+        document.getElementById("desc").value = "";
+        document.getElementById("file").value = "";
+
+        selectedFile = null;
+
+        loadMods();
+
+    }catch(err){
+
+        console.error(err);
+        alert(err.message);
+
+    }
 };
 
-window.deleteMod = async(id)=>{
+window.deleteMod = async function(id){
 
-  if(!confirm("Usunąć moda?")) return;
+    if(!confirm("Usunąć tego moda?")){
+        return;
+    }
 
-  await deleteDoc(doc(db,"mods",id));
+    await deleteDoc(doc(db, "mods", id));
 
-  loadMods();
+    loadMods();
 };
 
 async function loadMods(){
 
-  const box = document.getElementById("mods");
+    const q = query(
+        collection(db, "mods"),
+        orderBy("time", "desc")
+    );
 
-  box.innerHTML = "";
+    const snap = await getDocs(q);
 
-  const q = query(
-    collection(db,"mods"),
-    orderBy("time","desc")
-  );
+    const box = document.getElementById("mods");
 
-  const snap = await getDocs(q);
+    box.innerHTML = "";
 
-  snap.forEach(d=>{
+    snap.forEach((d) => {
 
-    const m = d.data();
+        const m = d.data();
 
-    box.innerHTML += `
-      <div class="card">
+        box.innerHTML += `
+            <div class="card">
 
-        ${
-          currentUser &&
-          ALLOWED_USERS.includes(currentUser.email)
-            ? `<button class="delete" onclick="deleteMod('${d.id}')">X</button>`
-            : ""
-        }
+                ${
+                    currentUser &&
+                    ALLOWED_USERS.includes(currentUser.email)
+                    ? `<button class="delete" onclick="deleteMod('${d.id}')">X</button>`
+                    : ""
+                }
 
-        ${
-          m.imageUrl
-            ? `<img src="${m.imageUrl}" alt="${m.name}">`
-            : ""
-        }
+                <div class="title">${m.name}</div>
 
-        <div class="title">${m.name}</div>
+                <div class="desc">
+                    ${m.desc || ""}
+                </div>
 
-        <div class="desc">${m.desc || ""}</div>
+                ${
+                    m.fileUrl
+                    ? `
+                    <a href="${m.fileUrl}" target="_blank">
+                        <button>⬇ Pobierz</button>
+                    </a>
+                    `
+                    : ""
+                }
 
-        ${
-          m.downloadLink
-            ? `
-              <a href="${m.downloadLink}" target="_blank">
-                <button>⬇ Pobierz</button>
-              </a>
-            `
-            : ""
-        }
-
-      </div>
-    `;
-  });
+            </div>
+        `;
+    });
 }
 
 </script>
