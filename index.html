@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FC26 Mods</title>
 
-<style>body{
+<!-- ===== CSS ULEPSZONY FIFA CAREER MODE ===== -->
+<style>
+body{
     margin:0;
     font-family: Arial, sans-serif;
     color:white;
@@ -13,83 +15,65 @@
     overflow-x:hidden;
 }
 
-/* przyciemnienie + efekt klimatu */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.75);
+    background:rgba(0,0,0,.78);
     z-index:-1;
 }
 
-/* ===== TOP BAR ===== */
+/* TOPBAR */
 .topbar{
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:15px 25px;
-    background:rgba(0,0,0,.6);
-    border-bottom:1px solid rgba(255,255,255,.05);
+    background:rgba(0,0,0,.7);
+    border-bottom:1px solid rgba(255,255,255,.06);
     backdrop-filter:blur(10px);
 }
 
 .logo{
     font-size:18px;
     font-weight:bold;
-    letter-spacing:2px;
-    color:#e5e5e5;
+    letter-spacing:3px;
 }
 
-.menu{
-    display:flex;
-    gap:15px;
-    font-size:13px;
-    opacity:.7;
-}
-
-/* ===== CONTAINER ===== */
+/* CONTAINER */
 .container{
     max-width:1100px;
     margin:auto;
     padding:25px;
 }
 
-/* ===== TITLE ===== */
 h1{
-    font-size:26px;
     text-transform:uppercase;
     letter-spacing:3px;
     color:#dcdcdc;
-    margin-bottom:5px;
 }
 
-.sub{
-    opacity:.5;
-    margin-bottom:20px;
-}
-
-/* ===== FORM PANEL ===== */
+/* FORM */
 .form{
     display:none;
-    background:rgba(10,10,10,.75);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:12px;
+    background:rgba(10,10,10,.7);
     padding:15px;
-    margin-bottom:20px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.08);
 }
 
-/* ===== INPUTS ===== */
+/* INPUTS */
 input, textarea{
     width:100%;
     padding:12px;
     margin:6px 0;
     border-radius:10px;
-    border:1px solid rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
     background:rgba(0,0,0,.6);
     color:white;
 }
 
-/* ===== BUTTON ===== */
+/* BUTTON */
 button{
     width:100%;
     padding:12px;
@@ -99,42 +83,35 @@ button{
     cursor:pointer;
     font-weight:bold;
     background:#1f1f1f;
-    color:#e5e5e5;
-    transition:.2s;
+    color:white;
 }
 
-button:hover{
-    background:#2a2a2a;
-}
-
-/* ===== GRID ===== */
+/* GRID */
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:15px;
+    margin-top:20px;
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .card{
     background:rgba(10,10,10,.85);
-    border:1px solid rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
     border-radius:12px;
     overflow:hidden;
     transition:.2s;
-    position:relative;
 }
 
 .card:hover{
     transform:translateY(-4px);
-    border-color:rgba(255,255,255,.15);
+    border-color:rgba(255,255,255,.2);
 }
 
-/* IMAGE */
 .card img{
     width:100%;
     height:180px;
     object-fit:cover;
-    filter:contrast(1.1);
 }
 
 /* CONTENT */
@@ -145,17 +122,16 @@ button:hover{
 .title{
     font-size:16px;
     font-weight:bold;
-    color:#e5e5e5;
-    letter-spacing:1px;
+    color:#eaeaea;
 }
 
 .desc{
-    opacity:.6;
+    opacity:.7;
     font-size:13px;
-    margin-top:5px;
+    margin-top:6px;
 }
 
-/* DELETE BUTTON */
+/* DELETE */
 .delete{
     position:absolute;
     top:10px;
@@ -164,9 +140,10 @@ button:hover{
     height:28px;
     border-radius:6px;
     background:#2b2b2b;
-    border:1px solid rgba(255,255,255,.1);
+    border:none;
     color:white;
-}</style>
+}
+</style>
 </head>
 
 <body>
