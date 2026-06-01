@@ -9,27 +9,29 @@
 /* GLOBAL FIX */
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
 }
 
 /* ===== GLOBAL ===== */
 body{
+    margin:0;
     font-family:'Inter', Arial, sans-serif;
-    color:#d4d4d8;
-    background:#0d0d0f;
+    color:#cfcfd4;
     overflow-x:hidden;
     overflow-y:auto;
+    background:
+        linear-gradient(135deg, rgba(0,0,0,.92), rgba(0,0,0,.65)),
+        url("https://wallpapers.com/images/hd/ea-sports-fc-24-4k-8jz8z7x6q7z7z7x6.jpg")
+        center/cover no-repeat fixed;
 }
 
-/* Subtelny matowy efekt */
+/* Subtelny matowy glow */
 body::before{
     content:"";
     position:fixed;
     inset:0;
     background:
-        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.03), transparent 60%),
-        radial-gradient(circle at bottom, rgba(0,0,0,0.7), transparent 70%);
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.04), transparent 60%),
+        radial-gradient(circle at bottom, rgba(0,0,0,0.8), transparent 70%);
     z-index:-1;
 }
 
@@ -39,24 +41,45 @@ body::before{
     justify-content:space-between;
     align-items:center;
     padding:15px 25px;
-    background:rgba(20,20,22,.75);
+    background:rgba(13,13,15,.65);
     backdrop-filter:blur(18px);
     border-bottom:1px solid rgba(255,255,255,.05);
+    position:sticky;
+    top:0;
+    z-index:50;
 }
 
 .logo{
     font-size:22px;
     font-weight:900;
     letter-spacing:4px;
-    color:#e5e5e7;
+    color:#cfcfd4;
+    text-shadow:0 0 6px rgba(255,255,255,.15);
 }
 
 .menu{
     display:flex;
-    gap:22px;
-    font-size:14px;
+    gap:25px;
+    font-size:15px;
     opacity:.75;
-    color:#b5b5b8;
+    cursor:pointer;
+}
+
+.menu div{
+    padding:6px 10px;
+    border-radius:6px;
+    transition:.25s;
+}
+
+.menu div:hover{
+    background:rgba(255,255,255,.08);
+    box-shadow:0 0 10px rgba(255,255,255,.15);
+}
+
+/* Active tab (HOME) */
+.menu div:first-child{
+    background:rgba(255,255,255,.08);
+    box-shadow:0 0 10px rgba(255,255,255,.15);
 }
 
 /* ===== CONTAINER ===== */
@@ -64,7 +87,13 @@ body::before{
     width:100%;
     max-width:1200px;
     margin:0 auto;
-    padding:25px;
+    padding:20px;
+    animation:fadeIn .6s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
 /* ===== TITLE ===== */
@@ -72,44 +101,44 @@ h1{
     font-size:32px;
     text-transform:uppercase;
     letter-spacing:4px;
-    color:#e5e5e7;
+    color:#cfcfd4;
     margin-bottom:5px;
+    text-shadow:0 0 10px rgba(255,255,255,.1);
 }
 
 .sub{
-    opacity:.55;
+    opacity:.6;
     margin-bottom:25px;
 }
 
 /* ===== FORM ===== */
 .form{
     display:none;
-    background:rgba(25,25,28,.6);
+    background:rgba(26,26,29,.55);
     border:1px solid rgba(255,255,255,.06);
     border-radius:16px;
     padding:20px;
     margin-bottom:25px;
     backdrop-filter:blur(10px);
+    animation:fadeIn .4s ease;
 }
 
 /* ===== INPUTS ===== */
-input,
-textarea{
+input, textarea{
     width:100%;
     padding:14px;
     margin:8px 0;
     border-radius:12px;
     border:1px solid rgba(255,255,255,.08);
-    background:#111113;
-    color:#e5e5e7;
+    background:rgba(0,0,0,.45);
+    color:#cfcfd4;
     outline:none;
     transition:.2s;
 }
 
-input:focus,
-textarea:focus{
-    border-color:#3f3f46;
-    box-shadow:0 0 8px rgba(80,80,90,.25);
+input:focus, textarea:focus{
+    border-color:#00ffaa;
+    box-shadow:0 0 10px rgba(0,255,170,.25);
 }
 
 /* ===== BUTTON ===== */
@@ -123,13 +152,34 @@ button{
     font-weight:700;
     letter-spacing:1px;
     background:linear-gradient(135deg,#1a1a1d,#0f0f11);
-    color:#e5e5e7;
+    color:#cfcfd4;
     transition:.25s;
+    position:relative;
+    overflow:hidden;
+    animation:fadeInLogin .8s ease;
+}
+
+button::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(0,255,170,.25), transparent);
+    opacity:0;
+    transition:.3s;
+}
+
+button:hover::after{
+    opacity:1;
 }
 
 button:hover{
     transform:translateY(-3px);
-    box-shadow:0 0 15px rgba(80,80,90,.25);
+    box-shadow:0 0 15px rgba(0,255,170,.25);
+}
+
+@keyframes fadeInLogin{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
 /* ===== GRID ===== */
@@ -142,19 +192,28 @@ button:hover{
 
 /* ===== CARD ===== */
 .card{
-    background:#141416;
+    background:rgba(13,13,15,.55);
     border:1px solid rgba(255,255,255,.06);
     border-radius:18px;
     overflow:hidden;
     transition:.25s;
     position:relative;
     backdrop-filter:blur(10px);
+    animation:cardIn .5s ease;
+}
+
+@keyframes cardIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
 .card:hover{
     transform:translateY(-6px) scale(1.02);
-    border-color:#3f3f46;
-    box-shadow:0 0 20px rgba(80,80,90,.25);
+    border-color:#00ffaa;
+    box-shadow:
+        0 0 10px rgba(0,255,170,.25),
+        0 0 25px rgba(0,255,170,.15),
+        0 0 40px rgba(0,255,170,.1);
 }
 
 /* IMAGE */
@@ -162,7 +221,7 @@ button:hover{
     width:100%;
     height:190px;
     object-fit:cover;
-    filter:contrast(1.05) brightness(.85);
+    filter:contrast(1.1) brightness(.9);
 }
 
 /* CONTENT */
@@ -174,11 +233,11 @@ button:hover{
     font-size:17px;
     font-weight:800;
     letter-spacing:1px;
-    color:#e5e5e7;
+    color:#cfcfd4;
 }
 
 .desc{
-    opacity:.7;
+    opacity:.75;
     font-size:14px;
     margin-top:6px;
 }
@@ -191,7 +250,7 @@ button:hover{
     width:32px;
     height:32px;
     border-radius:10px;
-    background:#0f0f11;
+    background:rgba(0,0,0,.6);
     border:1px solid rgba(255,255,255,.1);
     color:white;
     cursor:pointer;
@@ -203,21 +262,47 @@ button:hover{
     transform:scale(1.1);
 }
 
-    
-</style>
+/* ===== LOADER ===== */
+.loader{
+    text-align:center;
+    padding:20px;
+    font-size:18px;
+    opacity:.7;
+    animation:pulse 1.2s infinite;
+}
 
+@keyframes pulse{
+    0%{opacity:.3;}
+    50%{opacity:1;}
+    100%{opacity:.3;}
+}
+
+/* ===== FOOTER ===== */
+.footer{
+    margin-top:40px;
+    padding:20px;
+    text-align:center;
+    opacity:.6;
+    font-size:14px;
+    background:rgba(0,0,0,.4);
+    border-top:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
+}
+</style>
 </head>
 
 <body>
-
 <div class="topbar">
-    <div class="logo">FC26 MODS</div>
-    <div class="menu">
-        <div>MODS</div>
-    </div>
+  <div class="logo">FC26 MODS</div>
+  <div class="menu">
+    <div>HOME</div>
+    <div>MODS</div>
+    <div>UPLOAD</div>
+  </div>
 </div>
 
 <div class="container">
+
     <h1>FC26 Mods</h1>
     <div class="sub">Upload + Download System</div>
 
@@ -231,8 +316,16 @@ button:hover{
         <button onclick="addMod()">Dodaj moda</button>
     </div>
 
+    <!-- LOADER -->
+    <div id="loader" class="loader" style="display:none;">Ładowanie modów...</div>
+
     <div class="grid" id="mods"></div>
+
 </div>
+
+<footer class="footer">
+    FC26 Mods © 2026 • Created by Adrian
+</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -240,13 +333,13 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC4GAAVlZEhZuUvsf5RVhHJYngcEjIrVdg",
-    authDomain: "fc26mods.firebaseapp.com",
-    projectId: "fc26mods",
-    storageBucket: "fc26mods.appspot.com",
-    messagingSenderId: "136509847285",
-    appId: "1:136509847285:web:d2d81cf7832194370d37bc",
-    measurementId: "G-SC0XK44T2E"
+  apiKey: "AIzaSyC4GAAVlZEhZuUvsf5RVhHJYngcEjIrVdg",
+  authDomain: "fc26mods.firebaseapp.com",
+  projectId: "fc26mods",
+  storageBucket: "fc26mods.appspot.com",
+  messagingSenderId: "136509847285",
+  appId: "1:136509847285:web:d2d81cf7832194370d37bc",
+  measurementId: "G-SC0XK44T2E"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -261,12 +354,14 @@ window.login = () => signInWithPopup(auth, provider);
 
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
+
     document.getElementById("form").style.display =
         (user && ALLOWED_USERS.includes(user.email)) ? "block" : "none";
+
     loadMods();
 });
 
-function toBase64(file) {
+function toBase64(file){
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -275,16 +370,18 @@ function toBase64(file) {
     });
 }
 
-window.addMod = async function() {
+window.addMod = async function(){
+
     const name = document.getElementById("name").value.trim();
     const desc = document.getElementById("desc").value.trim();
     const fileUrl = document.getElementById("fileUrl").value.trim();
     const imgFile = document.getElementById("imgFile").files[0];
 
-    if (!name) return alert("Podaj nazwę moda");
+    if(!name) return alert("Podaj nazwę moda");
 
     let imgBase64 = "";
-    if (imgFile) {
+
+    if(imgFile){
         imgBase64 = await toBase64(imgFile);
     }
 
@@ -304,19 +401,23 @@ window.addMod = async function() {
     loadMods();
 };
 
-window.deleteMod = async function(id) {
-    if (confirm("Usunąć moda?")) {
+window.deleteMod = async function(id){
+    if(confirm("Usunąć moda?")){
         await deleteDoc(doc(db, "mods", id));
         loadMods();
     }
 };
 
-async function loadMods() {
-    const q = query(collection(db, "mods"), orderBy("time", "desc"));
-    const snap = await getDocs(q);
+async function loadMods(){
 
+    const loader = document.getElementById("loader");
     const box = document.getElementById("mods");
+
+    loader.style.display = "block";
     box.innerHTML = "";
+
+    const q = query(collection(db, "mods"), orderBy("time","desc"));
+    const snap = await getDocs(q);
 
     snap.forEach((d) => {
         const m = d.data();
@@ -325,25 +426,26 @@ async function loadMods() {
             <div class="card">
                 ${m.imgUrl ? `<img src="${m.imgUrl}">` : ""}
                 <div class="card-content">
-
-                    ${currentUser && ALLOWED_USERS.includes(currentUser.email)
+                    ${
+                        currentUser && ALLOWED_USERS.includes(currentUser.email)
                         ? `<button class="delete" onclick="deleteMod('${d.id}')">×</button>`
                         : ""
                     }
-
                     <div class="title">${m.name}</div>
                     <div class="desc">${m.desc || ""}</div>
-
-                    ${m.fileUrl
+                    ${
+                        m.fileUrl
                         ? `<a href="${m.fileUrl}" target="_blank">
-                               <button>⬇ Pobierz</button>
-                           </a>`
+                            <button>⬇ Pobierz</button>
+                          </a>`
                         : ""
                     }
                 </div>
             </div>
         `;
     });
+
+    loader.style.display = "none";
 }
 </script>
 
